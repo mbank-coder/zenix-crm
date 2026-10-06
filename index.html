@@ -1,0 +1,2675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZENIX CRM — Sales, Service & Renewals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-base:#0a0e1a; --bg-surface:#0f1629; --bg-card:#111827; --bg-card-hover:#1a2235;
+  --bg-nav:linear-gradient(90deg,#1a1f3e 0%,#0f1629 40%,#0a0e1a 100%);
+  --bg-input:#ffffff0d;
+  --text-primary:#f1f5f9; --text-secondary:#94a3b8; --text-muted:#64748b;
+  --border-color:#1e293b; --border-subtle:#ffffff14;
+  --purple:#8b5cf6; --cyan:#06b6d4; --green:#22c55e; --teal:#2dd4bf; --amber:#f59e0b;
+  --red:#ef4444; --blue:#3b82f6; --pink:#ec4899;
+  --glow-primary:#8b5cf62e; --glow-accent:#06b6d41f;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg-base);color:var(--text-primary);font-family:Inter,'Segoe UI',system-ui,-apple-system,sans-serif;font-size:14px;min-height:100vh}
+a{color:var(--cyan);text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+
+/* ============ NAV ============ */
+.topnav{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:6px;padding:10px 20px;background:var(--bg-nav);border-bottom:1px solid var(--border-subtle)}
+.logo{display:flex;align-items:center;gap:10px;margin-right:18px}
+.logo-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#8b5cf6,#06b6d4);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;color:#fff;box-shadow:none}
+.logo-name{font-weight:800;font-size:17px;letter-spacing:2px}
+.nav-btn{display:flex;align-items:center;gap:7px;background:transparent;border:none;color:var(--text-secondary);font-size:13.5px;font-weight:500;padding:8px 14px;border-radius:9px;transition:all .15s}
+.nav-btn:hover{color:var(--text-primary);background:#ffffff0a}
+.nav-btn.active{background:#ffffff14;color:#fff;box-shadow:inset 0 -2px 0 var(--purple)}
+.nav-spacer{flex:1}
+.nav-search{background:var(--bg-input);border:1px solid var(--border-subtle);border-radius:9px;color:var(--text-primary);padding:8px 14px;font-size:13px;width:230px;outline:none}
+.nav-search:focus{border-color:var(--purple)}
+.nav-user{display:flex;align-items:center;gap:8px;margin-left:14px;font-weight:600;font-size:13.5px}
+.avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#6d5ef0,#3b82f6);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex:none}
+
+.nav-group{display:flex;flex-direction:column;align-items:flex-start;padding:0 12px;border-left:1px solid var(--border-subtle);gap:1px}
+.nav-cap{font-size:8.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text-muted);padding-left:14px;line-height:1}
+.nav-tabs{display:flex;gap:2px}
+.nav-tabs .nav-btn{padding:5px 14px;font-size:13px}
+.topnav{padding-top:8px;padding-bottom:8px}
+.nav-new{position:relative;margin-right:10px}
+.nav-menu{display:none;position:absolute;right:0;top:calc(100% + 8px);background:#0f1629;border:1px solid var(--border-color);border-radius:12px;min-width:250px;box-shadow:0 14px 40px #000a;z-index:60;overflow:hidden;padding:5px}
+.nav-menu.open{display:block}
+.nav-menu button{display:block;width:100%;text-align:left;background:none;border:none;padding:10px 13px;border-radius:9px;color:var(--text-primary)}
+.nav-menu button:hover{background:#ffffff0d}
+.nav-menu button b{display:block;font-size:13px;font-weight:600}
+.nav-menu button span{display:block;font-size:11px;color:var(--text-muted);margin-top:1px}
+
+/* ============ LAYOUT ============ */
+.view{display:none;padding:22px 24px 60px;max-width:1500px;margin:0 auto}
+.view.active{display:block}
+.page-head{padding:16px 20px;border-radius:14px;margin-bottom:18px;background:var(--bg-surface);border:1px solid var(--border-subtle);display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between}
+.page-title{font-size:21px;font-weight:700;letter-spacing:-.2px;color:var(--text-primary)}
+.page-sub{color:var(--text-secondary);font-size:13px;margin-top:3px}
+.filters{display:flex;gap:8px;flex-wrap:wrap}
+.filter-select,.filter-input{background:#0b1122;border:1px solid var(--border-color);color:var(--text-secondary);border-radius:9px;padding:8px 12px;font-size:12.5px;outline:none}
+.filter-input{width:190px;color:var(--text-primary)}
+.filter-input:focus,.filter-select:focus{border-color:var(--purple)}
+
+/* ============ KPI CARDS ============ */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
+.kpi{position:relative;background:var(--bg-card);border:1px solid var(--border-color);border-radius:13px;padding:14px 16px;cursor:pointer;transition:all .15s;overflow:hidden}
+.kpi:hover{background:var(--bg-card-hover);transform:translateY(-1px)}
+.kpi.selected{border-color:var(--purple);box-shadow:0 0 0 1px var(--purple),0 0 22px var(--glow-primary)}
+.kpi .ic{font-size:17px;margin-bottom:8px;display:block}
+.kpi .badge{position:absolute;top:10px;right:12px;background:#ffffff12;border:1px solid var(--border-subtle);border-radius:20px;font-size:11px;font-weight:700;padding:2px 9px}
+.kpi h4{font-size:13.5px;font-weight:700}
+.kpi p{font-size:11px;color:var(--text-muted);margin-top:3px}
+.kpi.k-red{background:linear-gradient(140deg,#2a1520,var(--bg-card) 60%)} .kpi.k-red .badge{color:#fca5a5}
+.kpi.k-amber{background:linear-gradient(140deg,#2a2113,var(--bg-card) 60%)} .kpi.k-amber .badge{color:#fcd34d}
+.kpi.k-cyan{background:linear-gradient(140deg,#0e2430,var(--bg-card) 60%)} .kpi.k-cyan .badge{color:#67e8f9}
+.kpi.k-green{background:linear-gradient(140deg,#10261b,var(--bg-card) 60%)} .kpi.k-green .badge{color:#86efac}
+.kpi.k-purple{background:linear-gradient(140deg,#1f1836,var(--bg-card) 60%)} .kpi.k-purple .badge{color:#c4b5fd}
+.kpi.k-gray .badge{color:var(--text-secondary)}
+.kpi.k-all{background:linear-gradient(140deg,#231a3f,#131b33 70%)}
+
+/* ============ STAGE SECTIONS ============ */
+.stage{background:var(--bg-surface);border:1px solid var(--border-color);border-left:3px solid var(--stage-c,#3b82f6);border-radius:14px;margin-bottom:16px;overflow:hidden}
+.stage-head{display:flex;align-items:center;gap:10px;padding:13px 16px;cursor:pointer;user-select:none}
+.stage-dot{width:8px;height:8px;border-radius:50%;background:var(--stage-c)}
+.stage-title{font-weight:700;font-size:14.5px}
+.stage-count{background:#ffffff10;border:1px solid var(--border-subtle);color:var(--text-secondary);border-radius:16px;font-size:11px;font-weight:700;padding:2px 9px}
+.stage-sub{font-size:11.5px;color:var(--text-muted);margin-left:2px}
+.stage-head .sp{flex:1}
+.collapse-btn{background:#ffffff0a;border:1px solid var(--border-subtle);color:var(--text-secondary);font-size:11.5px;border-radius:8px;padding:5px 12px}
+.stage.collapsed .stage-body{display:none}
+.stage-foot{padding:8px 16px;border-top:1px solid var(--border-subtle);color:var(--text-muted);font-size:11px;display:flex;justify-content:flex-end}
+
+/* ============ TABLES ============ */
+table{width:100%;border-collapse:collapse}
+thead th{font-size:10.5px;letter-spacing:.8px;text-transform:uppercase;color:var(--text-muted);font-weight:700;text-align:left;padding:10px 12px;border-top:1px solid var(--border-subtle);border-bottom:1px solid var(--border-subtle);background:#0d1424}
+tbody td{padding:11px 12px;border-bottom:1px solid #16203a;font-size:13px;vertical-align:middle}
+tbody tr{transition:background .12s;cursor:pointer}
+tbody tr:hover{background:#151d33}
+.biz{display:flex;align-items:center;gap:11px;min-width:210px}
+.biz .avatar{border-radius:9px;width:32px;height:32px;font-size:11px}
+.biz b{font-size:13.2px;font-weight:600;display:block;max-width:270px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.biz span{font-size:11px;color:var(--text-muted);display:block;max-width:270px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pill{display:inline-flex;align-items:center;gap:5px;border-radius:16px;padding:3px 10px;font-size:11px;font-weight:600;border:1px solid transparent;white-space:nowrap}
+.pill.line{background:#8b5cf61a;color:#c4b5fd;border-color:#8b5cf640;margin:1px 2px 1px 0}
+.p-bound{background:#22c55e1a;color:#86efac;border-color:#22c55e40}
+.p-quoted{background:#3b82f61a;color:#93c5fd;border-color:#3b82f640}
+.p-expired{background:#ef44441a;color:#fca5a5;border-color:#ef444440}
+.p-unknown{background:#64748b22;color:#94a3b8;border-color:#64748b40}
+.p-due{background:#f59e0b1a;color:#fcd34d;border-color:#f59e0b40}
+.date-chip{background:#ffffff0d;border:1px solid var(--border-subtle);border-radius:8px;padding:3px 9px;font-size:11.5px;color:var(--text-secondary);white-space:nowrap}
+.days{font-size:10.5px;font-weight:700;margin-left:6px}
+.days.d-red{color:#f87171}.days.d-amber{color:#fbbf24}.days.d-ok{color:#4ade80}
+.prem{font-weight:700;font-variant-numeric:tabular-nums}
+.phone{color:#4ade80;font-size:12.5px;white-space:nowrap}
+.actions{display:flex;gap:7px;justify-content:flex-end}
+.act-btn{background:#ffffff0a;border:1px solid var(--border-subtle);color:var(--text-secondary);font-size:11.5px;border-radius:8px;padding:5px 12px;transition:all .12s}
+.act-btn:hover{color:#fff;background:#ffffff14}
+.act-btn.primary{background:#8b5cf6;border-color:#8b5cf6;color:#fff}
+.act-btn.primary:hover{background:#7c3aed}
+.empty-note{padding:26px;text-align:center;color:var(--text-muted);font-size:12.5px}
+.pr-chip{display:inline-block;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700;white-space:nowrap;border:1px solid transparent}
+.pr-hot{background:#ef44441f;color:#fca5a5;border-color:#ef444455}
+.pr-call{background:#f59e0b1c;color:#fcd34d;border-color:#f59e0b4d}
+.pr-follow{background:#3b82f61c;color:#93c5fd;border-color:#3b82f64d}
+.pr-recent{background:#64748b22;color:#a8b3c7;border-color:#64748b40}
+.pr-wait{background:#8b5cf61c;color:#c4b5fd;border-color:#8b5cf64d}
+.pr-cold{background:#64748b22;color:#94a3b8;border-color:#64748b40}
+.pr-book{background:#06b6d41c;color:#67e8f9;border-color:#06b6d44d}
+.pr-done{background:#22c55e1c;color:#86efac;border-color:#22c55e4d}
+.pr-off{background:#ffffff08;color:var(--text-muted);border-color:var(--border-subtle)}
+.try-wrap{display:flex;align-items:center;gap:4px;white-space:nowrap}
+.try-dot{width:8px;height:8px;border-radius:50%;background:#334155;display:inline-block}
+.try-dot.on{background:#7dd3fc}
+.try-none{font-size:11px;color:var(--text-muted)}
+.try-last{font-size:10.5px;color:var(--text-muted);margin-left:5px}
+.try-more{font-size:10.5px;color:#7dd3fc;font-weight:700}
+.log-btns{display:flex;gap:5px}
+.log-btn{background:#ffffff08;border:1px solid var(--border-subtle);color:var(--text-secondary);font-size:11px;font-weight:600;border-radius:7px;padding:4px 9px;transition:all .12s}
+.log-btn:hover{color:#fff;background:#ffffff14}
+.log-btn.ok{color:#86efac;border-color:#22c55e55}
+.log-btn.ok:hover{background:#22c55e22}
+
+/* ============ DASHBOARD ============ */
+.dash-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
+.card{background:var(--bg-card);border:1px solid var(--border-color);border-radius:14px;padding:16px 18px}
+.card h3{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.card h3 .bar-ind{width:3px;height:14px;border-radius:2px;background:var(--purple)}
+.big-num{font-size:31px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.5px}
+.sub-num{font-size:11.5px;color:var(--text-muted);margin-top:5px}
+.hero-card{background:radial-gradient(500px 200px at 80% -20%,#8b5cf628,transparent),var(--bg-card);border-color:#8b5cf640}
+.stat-line{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #ffffff0a;font-size:12.5px;color:var(--text-secondary)}
+.stat-line:last-child{border:none}
+.stat-line b{color:var(--text-primary);font-variant-numeric:tabular-nums}
+.chart-wrap{position:relative}
+.chart-tip{position:absolute;pointer-events:none;background:#1a2235f2;border:1px solid #ffffff22;border-radius:9px;padding:7px 11px;font-size:11.5px;color:var(--text-primary);display:none;z-index:10;white-space:nowrap;box-shadow:0 6px 22px #00000066}
+.chart-tip b{display:block;font-size:12px}
+.chart-tip span{color:var(--text-secondary);font-size:10.5px}
+.leader-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #ffffff0a;font-size:12.5px}
+.leader-row:last-child{border:none}
+.leader-row .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-secondary)}
+.leader-row .val{font-weight:700;font-variant-numeric:tabular-nums;background:#ffffff0d;border-radius:7px;padding:3px 9px;font-size:11.5px}
+
+/* ============ MODAL (client detail) ============ */
+.modal-bg{position:fixed;inset:0;background:#05070ecc;backdrop-filter:blur(3px);z-index:100;display:none;align-items:flex-start;justify-content:center;padding:4vh 16px;overflow-y:auto}
+.modal-bg.open{display:flex}
+.modal{background:var(--bg-surface);border:1px solid #ffffff1e;border-radius:16px;width:min(880px,100%);box-shadow:0 30px 80px #000000aa;overflow:hidden}
+.modal-head{padding:20px 22px 0;background:linear-gradient(180deg,#171f3a,transparent)}
+.mh-top{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap}
+.mh-top .avatar{width:44px;height:44px;border-radius:12px;font-size:15px}
+.mh-title{flex:1;min-width:200px}
+.mh-title h2{font-size:19px;font-weight:800}
+.mh-title .ops{color:var(--text-secondary);font-size:12.5px;margin-top:3px}
+.mh-title .contact{display:flex;gap:16px;flex-wrap:wrap;margin-top:8px;font-size:12.5px;color:var(--text-secondary)}
+.mh-actions{display:flex;gap:8px;flex-wrap:wrap}
+.mtabs{display:flex;gap:4px;margin-top:16px;border-bottom:1px solid var(--border-subtle);overflow-x:auto}
+.mtab{background:none;border:none;color:var(--text-secondary);font-size:12.5px;font-weight:600;padding:10px 14px;border-bottom:2px solid transparent;white-space:nowrap}
+.mtab.active{color:#c4b5fd;border-bottom-color:var(--purple)}
+.modal-body{padding:20px 22px;min-height:220px}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.fld label{display:block;font-size:10.5px;letter-spacing:.8px;text-transform:uppercase;color:var(--text-muted);font-weight:700;margin-bottom:5px}
+.fld .val{background:var(--bg-input);border:1px solid var(--border-subtle);border-radius:9px;padding:9px 12px;font-size:13px;min-height:37px;color:var(--text-primary)}
+.fld .val.empty{color:var(--text-muted);font-style:italic}
+.close-x{background:none;border:none;color:var(--text-muted);font-size:20px;padding:4px 8px}
+.close-x:hover{color:#fff}
+.pol-card{background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:14px 16px;margin-bottom:10px}
+.pol-card .ph{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.pol-card .ph b{font-size:14px}
+.pol-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;font-size:12px;color:var(--text-secondary)}
+.pol-meta span b{display:block;color:var(--text-primary);font-weight:600;margin-top:2px}
+.note-box{background:#f59e0b12;border:1px solid #f59e0b33;border-radius:10px;padding:11px 14px;font-size:12.5px;color:#fcd34d;margin-top:14px}
+@media (max-width:760px){.topnav{flex-wrap:wrap}.nav-search{width:140px}.view{padding:14px 10px 60px}}
+
+/* ============ QUOTE BUILDER ============ */
+.q-layout{display:grid;grid-template-columns:minmax(340px,470px) 1fr;gap:16px;align-items:start}
+@media (max-width:1100px){.q-layout{grid-template-columns:1fr}}
+.q-form{display:flex;flex-direction:column;gap:14px}
+.q-card{background:var(--bg-card);border:1px solid var(--border-color);border-radius:14px;padding:15px 16px}
+.q-card h3{font-size:12px;letter-spacing:.8px;text-transform:uppercase;color:#c4b5fd;font-weight:700;margin-bottom:11px}
+.q-grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.q-grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:10px;margin-top:8px}
+.q-in{background:var(--bg-input);border:1px solid var(--border-subtle);border-radius:9px;color:var(--text-primary);padding:8px 10px;font-size:12.5px;width:100%;outline:none;font-family:inherit}
+.q-in:focus{border-color:var(--purple)}
+textarea.q-in{resize:vertical;line-height:1.5}
+.q-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.q-chip{background:var(--bg-input);border:1px solid var(--border-subtle);color:var(--text-secondary);border-radius:10px;padding:8px 14px;font-size:12.5px;font-weight:600;transition:all .12s}
+.q-chip:hover{color:#fff}
+.q-chip.on{background:#c026d3;border-color:#c026d3;color:#fff;box-shadow:0 0 14px #c026d34d}
+.q-line-cfg{border:1px solid var(--border-subtle);border-left:3px solid var(--purple);border-radius:10px;padding:11px 13px;margin-bottom:10px}
+.q-line-cfg h4{font-size:12.5px;margin-bottom:9px;color:var(--text-primary)}
+.q-preview{background:#33383f;border-radius:14px;padding:22px;overflow:auto;max-height:calc(100vh - 140px);position:sticky;top:70px}
+
+/* ---- proposal (light, print-faithful) ---- */
+.prop{background:#fff;color:#1a2233;width:8.5in;max-width:100%;margin:0 auto 18px;padding:0 0 26px;box-shadow:0 8px 40px #00000059;font-family:'Segoe UI',Roboto,Arial,sans-serif;border-radius:3px;overflow:hidden}
+.prop-head{background:#232946;color:#fff;padding:20px 34px 15px}
+.prop-head h1{font-size:22px;letter-spacing:.5px;font-weight:800}
+.prop-head .ct{font-size:11.5px;color:#c8cded;margin-top:3px}
+.prop-meta{display:flex;gap:26px;flex-wrap:wrap;padding:9px 34px;border-bottom:1px solid #e3e8f2;font-size:11.5px;background:#f6f9fd}
+.prop-meta b{color:#2f6fdb}
+.prop-body{padding:16px 34px 0}
+.prop-client{font-size:17.5px;font-weight:800;margin:4px 0 10px}
+.prop-carrier{border:1px solid #e3e8f2;border-radius:10px;padding:11px 15px;margin-bottom:14px}
+.prop-carrier .row{display:flex;align-items:center;gap:10px;padding:3.5px 0;font-size:12.5px}
+.ppill{background:#2f6fdb;color:#fff;font-size:9.5px;font-weight:700;letter-spacing:.6px;border-radius:11px;padding:3px 11px;min-width:86px;text-align:center}
+.prop-sec{font-size:13px;font-weight:700;margin:13px 0 8px}
+.cov-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.cov-box{background:#f7f9fc;border:1px solid #e8edf5;border-radius:9px;padding:9px 13px}
+.cov-box .cl{font-size:9.5px;font-weight:700;letter-spacing:.5px;color:#2f6fdb;text-transform:uppercase}
+.cov-box .cv{font-size:16px;font-weight:800;margin-top:1px}
+.cov-box .cs{font-size:9.5px;color:#8a93a6}
+.cov-inline{display:flex;gap:22px;flex-wrap:wrap;border:1px solid #e8edf5;border-radius:9px;padding:8px 15px;margin-top:9px;font-size:11.5px}
+.cov-inline b{color:#2f6fdb}
+.feat-row{display:flex;gap:9px;flex-wrap:wrap;margin-top:10px}
+.feat{background:#e9f7ef;color:#1c7d43;font-size:11px;font-weight:600;border-radius:8px;padding:7px 12px}
+.feat::before{content:'✓ ';font-weight:800}
+.biz-crit{border:1px solid #e3e8f2;border-radius:10px;padding:11px 15px;margin-top:5px;font-size:12px}
+.biz-crit .bg2{display:grid;grid-template-columns:1fr 1fr;gap:4px 20px}
+.biz-crit b{color:#2f6fdb;font-weight:700}
+.prem-block{background:#f6f9fd;border:1px solid #e3e8f2;border-radius:10px;margin-top:14px;overflow:hidden}
+.prem-block .ph2{padding:10px 16px;font-weight:800;font-size:13.5px;border-bottom:1px solid #e3e8f2;background:#eef3fb}
+.prem-rows{padding:9px 16px}
+.prem-row{display:flex;justify-content:space-between;font-size:12.5px;padding:3.5px 0}
+.prem-row b{color:#2f6fdb}
+.prem-row .amt{font-weight:800}
+.prem-fn{font-size:10px;font-style:italic;color:#5a6478;padding:2px 16px 9px}
+.prop-disc{font-size:9px;color:#6a7386;line-height:1.45;margin-top:12px}
+.sig-row{display:flex;gap:34px;margin-top:26px;font-size:11px}
+.sig-row .sl{flex:1;border-top:1px solid #333;padding-top:4px}
+.sig-row .sd{width:130px;border-top:1px solid #333;padding-top:4px}
+.prop-eff{font-size:11px;margin-top:13px}
+.prop-foot{text-align:center;font-size:10px;color:#7c8598;margin-top:20px;border-top:1px solid #e8edf5;padding-top:9px}
+.prop2-list{columns:2;column-gap:26px;font-size:10px;line-height:1.55;color:#39424f}
+.prop2-list div{break-inside:avoid;padding:1.5px 0 1.5px 12px;text-indent:-12px}
+.fee-table{border:1px solid #e3e8f2;border-radius:10px;margin-top:10px;font-size:12px;overflow:hidden}
+.fee-table .fr{display:flex;justify-content:space-between;padding:7px 15px;border-bottom:1px solid #eef1f7}
+.fee-table .fr:last-child{border:none;background:#eef3fb;font-weight:800}
+.disc-txt{font-size:9.5px;color:#5a6478;line-height:1.5;margin-top:10px;border:1px solid #e8edf5;border-radius:8px;padding:9px 12px}
+@media print{
+  body *{visibility:hidden}
+  #propPrint,#propPrint *{visibility:visible}
+  #propPrint{position:absolute;left:0;top:0;width:100%}
+  .prop{box-shadow:none;width:100%;margin:0;border-radius:0;page-break-after:always}
+  .q-preview{all:unset}
+}
+</style>
+<meta name="robots" content="noindex,nofollow">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+<nav class="topnav">
+  <div class="logo"><div class="logo-mark">⚡</div><div class="logo-name">ZENIX</div></div>
+  <button class="nav-btn" data-view="dashboard" onclick="go('dashboard')">Dashboard</button>
+  <div class="nav-group"><span class="nav-cap">Sales</span><div class="nav-tabs">
+    <button class="nav-btn" data-view="leads" onclick="go('leads')">Leads</button>
+    <button class="nav-btn" data-view="pipeline" onclick="go('pipeline')">Pipeline</button>
+    <button class="nav-btn" data-view="markets" onclick="go('markets');renderMarkets()">Markets</button>
+  </div></div>
+  <div class="nav-group"><span class="nav-cap">Client service</span><div class="nav-tabs">
+    <button class="nav-btn" data-view="clients" onclick="go('clients')">Clients</button>
+    <button class="nav-btn" data-view="tasks" onclick="go('tasks')">Tasks</button>
+  </div></div>
+  <div class="nav-group"><span class="nav-cap">Accounting</span><div class="nav-tabs">
+    <button class="nav-btn" data-view="accounting" onclick="go('accounting');renderAccounting()">Billing &amp; Fees</button>
+  </div></div>
+  <div class="nav-group"><span class="nav-cap">Renewals</span><div class="nav-tabs">
+    <button class="nav-btn active" data-view="priority" onclick="go('priority')">Renewals</button>
+  </div></div>
+  <div class="nav-spacer"></div>
+  <div class="nav-new" id="navNew">
+    <button class="act-btn primary" style="padding:8px 16px;font-size:13px;font-weight:600" onclick="navNewToggle(event)">＋ New ▾</button>
+    <div class="nav-menu" id="navNewMenu">
+      <button onclick="navNewGo('intake')"><b>Smart Intake</b><span>Guided wizard — new prospect to quote-ready</span></button>
+      <button onclick="navNewGo('qq')"><b>Quick Quote</b><span>Fast indication for a lead or client</span></button>
+      <button onclick="navNewGo('quote')"><b>Full Quote / Proposal</b><span>Print-ready proposal builder</span></button>
+    </div>
+  </div>
+  <input class="nav-search" id="globalSearch" placeholder="Search clients..." oninput="globalSearch(this.value)">
+  <div class="nav-user"><div class="avatar" id="navAvatar">?</div><span id="navUser">—</span><a href="#" onclick="doSignOut(event)" style="margin-left:10px;font-size:11px;color:var(--text-muted)">Sign out</a></div>
+</nav>
+
+<!-- ================= PRIORITY VIEW ================= -->
+<div class="view active" id="view-priority">
+  <div class="page-head">
+    <div>
+      <div class="page-title">Renewal Management</div>
+      <div class="page-sub">Your live book, prioritized by expiration — what needs attention now to keep accounts on the books</div>
+    </div>
+    <div class="filters">
+      <input class="filter-input" id="pvSearch" placeholder="Search deals..." oninput="renderPriority()">
+      <select class="filter-select" id="pvLine" onchange="renderPriority()"><option value="">All Lines</option></select>
+      <select class="filter-select" id="pvCarrier" onchange="renderPriority()"><option value="">All Carriers</option></select>
+      <select class="filter-select" id="pvAgent" onchange="renderPriority()"><option value="">Assigned To</option><option>James Bekhor</option><option>Michael Bank</option><option value="__none">Unassigned</option></select>
+      <select class="filter-select" id="pvState" onchange="renderPriority()"><option value="">All States</option></select>
+    </div>
+  </div>
+  <div id="pvAlert"></div>
+  <div class="kpi-row" id="pvKpis"></div>
+  <div id="pvStages"></div>
+  <div style="text-align:center;color:var(--text-muted);font-size:12px;margin-top:18px" id="pvFooter"></div>
+</div>
+
+<!-- ================= DASHBOARD ================= -->
+<div class="view" id="view-dashboard">
+  <div class="page-head">
+    <div>
+      <div style="font-size:10.5px;letter-spacing:1.5px;color:var(--text-muted);font-weight:700">OVERVIEW</div>
+      <div class="page-title">Book Dashboard</div>
+      <div class="page-sub">Premium, renewals, and carrier mix across the entire Drive book</div>
+    </div>
+    <div style="color:#4ade80;font-size:11.5px">● Google Drive + archive@ email verified · <span id="dashStamp"></span></div>
+  </div>
+  <div id="dashAlert"></div>
+  <div class="dash-grid" id="dashGrid"></div>
+</div>
+
+<!-- ================= CLIENTS ================= -->
+<div class="view" id="view-clients">
+  <div class="page-head">
+    <div>
+      <div class="page-title">Clients</div>
+      <div class="page-sub" id="clientsSub"></div>
+    </div>
+    <div class="filters">
+      <input class="filter-input" id="clSearch" placeholder="Search clients..." oninput="renderClients()">
+      <select class="filter-select" id="clStage" onchange="renderClients()">
+        <option value="">All Statuses</option><option value="active">Active coverage</option>
+        <option value="due">Renewal ≤ 90d</option><option value="lapsed">Lapsed / cancelled</option>
+        <option value="quoted">Quoted only</option>
+      </select>
+      <select class="filter-select" id="clSort" onchange="renderClients()">
+        <option value="renewal">Sort: Next renewal</option><option value="name">Sort: Name</option>
+        <option value="premium">Sort: Premium</option><option value="recent">Sort: Recent activity</option>
+      </select>
+    </div>
+  </div>
+  <div class="stage" style="--stage-c:#8b5cf6">
+    <div class="stage-body"><div style="overflow-x:auto"><table id="clientsTable"></table></div></div>
+    <div class="stage-foot" id="clientsFoot"></div>
+  </div>
+</div>
+
+<!-- ================= TASKS ================= -->
+<div class="view" id="view-tasks">
+  <div class="page-head">
+    <div>
+      <div class="page-title">Tasks</div>
+      <div class="page-sub">Operational follow-ups generated from the book — renewals, cancellations, and data gaps</div>
+    </div>
+  </div>
+  <div class="kpi-row" id="taskKpis"></div>
+  <div class="stage" style="--stage-c:#ec4899">
+    <div class="stage-body"><div style="overflow-x:auto"><table id="tasksTable"></table></div></div>
+    <div class="stage-foot" id="tasksFoot"></div>
+  </div>
+</div>
+
+<!-- ================= NEW QUOTE ================= -->
+<div class="view" id="view-quote">
+  <div class="page-head">
+    <div>
+      <div class="page-title">New Quote</div>
+      <div class="page-sub">Build a mono-line or multi-line proposal in the Zenix format — upload the MGA quote to pull endorsements &amp; exclusions</div>
+    </div>
+    <div class="filters">
+      <button class="act-btn" onclick="qResetForm()">↺ Reset</button>
+      <button class="act-btn" onclick="qDownloadJson()">⬇ Quote JSON</button>
+      <button class="act-btn primary" onclick="qPrint()">🖨 Print / Save PDF</button>
+    </div>
+  </div>
+  <div class="q-layout">
+    <div class="q-form">
+      <div class="q-card">
+        <h3>1 · Client</h3>
+        <div class="q-grid2">
+          <div class="fld"><label>Existing client (optional)</label>
+            <select class="filter-select" id="qClientPick" style="width:100%" onchange="qPickClient()"><option value="">— New client —</option></select></div>
+          <div class="fld"><label>Business name</label><input class="q-in" id="qName" placeholder="Business name, LLC" oninput="qRender()"></div>
+          <div class="fld"><label>Proposal date</label><input class="q-in" id="qDate" type="date" onchange="qRender()"></div>
+          <div class="fld"><label>Prepared by</label><select class="filter-select" id="qPrep" style="width:100%" onchange="qRender()"><option>Michael Bank</option><option>James Avraham</option></select></div>
+          <div class="fld"><label>State (disclosure)</label><select class="filter-select" id="qState" style="width:100%" onchange="qRender()"><option>FL</option><option>TX</option><option>PA</option><option>CA</option><option value="">Other</option></select></div>
+          <div class="fld"><label>Description of operations</label><input class="q-in" id="qDesc" placeholder="e.g. Commercial remodeling and buildouts..." oninput="qRender()"></div>
+        </div>
+        <div class="q-grid4">
+          <div class="fld"><label>Active owners</label><input class="q-in" id="qOwners" value="1" oninput="qRender()"></div>
+          <div class="fld"><label>Employee payroll</label><input class="q-in" id="qPayroll" placeholder="$0" oninput="qRender()"></div>
+          <div class="fld"><label>Gross receipts</label><input class="q-in" id="qReceipts" placeholder="$" oninput="qRender()"></div>
+          <div class="fld"><label>Sub costs</label><input class="q-in" id="qSubs" placeholder="$0" oninput="qRender()"></div>
+        </div>
+      </div>
+      <div class="q-card">
+        <h3>2 · Lines of Coverage <span style="color:var(--text-muted);font-weight:400;font-size:11px">— pick one or several</span></h3>
+        <div class="q-chips" id="qLineChips"></div>
+        <div id="qLineCfg"></div>
+      </div>
+      <div class="q-card">
+        <h3>3 · MGA Quote Upload <span style="color:var(--text-muted);font-weight:400;font-size:11px">— extracts endorsements &amp; exclusions</span></h3>
+        <input type="file" id="qPdf" accept="application/pdf" multiple onchange="qExtractPdf(this.files)" style="color:var(--text-secondary);font-size:12px">
+        <div id="qPdfStatus" style="font-size:11.5px;color:var(--text-muted);margin-top:8px">No quote uploaded yet — endorsement/exclusion page will be skipped unless filled below.</div>
+        <div class="q-grid2" style="margin-top:10px">
+          <div class="fld"><label>Endorsements / forms (one per line)</label><textarea class="q-in" id="qEndos" rows="7" oninput="qRender()"></textarea></div>
+          <div class="fld"><label>Exclusions (one per line)</label><textarea class="q-in" id="qExcls" rows="7" oninput="qRender()"></textarea></div>
+        </div>
+      </div>
+      <div class="q-card">
+        <h3>4 · Pricing &amp; Fees</h3>
+        <div class="q-grid4">
+          <div class="fld"><label>Wholesale total (cost)</label><input class="q-in" id="qWholesale" placeholder="$" oninput="qFees();qRender()"></div>
+          <div class="fld"><label>Retail total (incl. fees)</label><input class="q-in" id="qRetail" placeholder="$" oninput="qFees();qRender()"></div>
+          <div class="fld"><label>Down payment %</label><input class="q-in" id="qDownPct" value="35" oninput="qRender()"></div>
+          <div class="fld"><label># Monthly payments</label><input class="q-in" id="qNumPay" value="10" oninput="qRender()"></div>
+        </div>
+        <div class="q-grid4">
+          <div class="fld"><label>Finance charge %</label><input class="q-in" id="qFinPct" value="6" oninput="qRender()"></div>
+          <div class="fld"><label>Broker Fee (fully earned)</label><input class="q-in" id="qFee1" oninput="qRender()"></div>
+          <div class="fld"><label>Policy Servicing Fee</label><input class="q-in" id="qFee2" oninput="qRender()"></div>
+          <div class="fld"><label>App Processing / Admin</label><input class="q-in" id="qFee3" oninput="qRender()"></div>
+        </div>
+        <div id="qFeeNote" style="font-size:11.5px;color:#86efac;margin-top:6px"></div>
+      </div>
+      <div class="q-card">
+        <h3>5 · Save</h3>
+        <button class="act-btn primary" onclick="qAddToBook()">＋ Add to book as Quoted (this session)</button>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:8px">The artifact can't persist new quotes between sessions yet — download the Quote JSON or print the proposal to keep it. The Phase 2 app will save these permanently.</div>
+      </div>
+    </div>
+    <div class="q-preview"><div id="propPrint"></div></div>
+  </div>
+</div>
+
+<!-- ================= LEADS ================= -->
+<div class="view" id="view-leads">
+  <div class="page-head">
+    <div>
+      <div class="page-title">Leads</div>
+      <div class="page-sub">Your BoldPenguin work queue — hottest first. Log every call attempt right from the row.</div>
+    </div>
+    <div class="filters">
+      <input class="filter-input" id="ldSearch" placeholder="Search name or phone..." oninput="renderLeads()">
+      <select class="filter-select" id="ldMonth" onchange="renderLeads()"><option value="">All Months</option></select>
+      <select class="filter-select" id="ldState" onchange="renderLeads()"><option value="">All States</option></select>
+      <select class="filter-select" id="ldStatus" onchange="renderLeads()"><option value="">All Statuses</option><option>new</option><option>called</option><option>quoted</option><option>won</option><option>dead</option></select>
+      <select class="filter-select" id="ldSort" onchange="renderLeads()"><option value="priority">Sort: Priority</option><option value="newest">Sort: Newest</option><option value="cost">Sort: Cost</option></select>
+    </div>
+  </div>
+  <div class="kpi-row" id="ldKpis"></div>
+  <div class="stage" style="--stage-c:#7dd3fc">
+    <div class="stage-body"><div style="overflow-x:auto"><table id="leadsTable"></table></div></div>
+    <div class="stage-foot" id="ldFoot"></div>
+  </div>
+</div>
+
+<!-- ================= ACCOUNTING ================= -->
+<div class="view" id="view-accounting">
+  <div class="page-head">
+    <div>
+      <div class="page-title">Accounting — Billing &amp; Fees</div>
+      <div class="page-sub">IPFS financing health and the broker-fee audit across the active book</div>
+    </div>
+    <div class="filters">
+      <input class="filter-input" id="acSearch" placeholder="Search clients..." oninput="renderAccounting()">
+      <select class="filter-select" id="acFee" onchange="renderAccounting()"><option value="">Fee audit: everything</option><option value="missing">Missing fee docs</option><option value="ok">Fee documented</option></select>
+    </div>
+  </div>
+  <div class="kpi-row" id="acKpis"></div>
+  <div class="stage" style="--stage-c:#ef4444">
+    <div class="stage-head" onclick="this.parentElement.classList.toggle('collapsed')">
+      <div class="stage-dot"></div><div class="stage-title">IPFS financing — needs attention</div>
+      <span class="stage-count" id="acIpfsCount">0</span><span class="stage-sub">cancellation warnings first, then cancelled with balances</span><div class="sp"></div>
+    </div>
+    <div class="stage-body"><div style="overflow-x:auto"><table id="acIpfsTable"></table></div></div>
+  </div>
+  <div class="stage" style="--stage-c:#f59e0b">
+    <div class="stage-head" onclick="this.parentElement.classList.toggle('collapsed')">
+      <div class="stage-dot"></div><div class="stage-title">Broker fee audit</div>
+      <span class="stage-count" id="acFeeCount">0</span><span class="stage-sub">every active account should have a documented fee, signed proposal and disclosure</span><div class="sp"></div>
+    </div>
+    <div class="stage-body"><div style="overflow-x:auto"><table id="acFeeTable"></table></div></div>
+  </div>
+</div>
+
+<!-- ================= QUICK QUOTE ================= -->
+<div class="view" id="view-qq">
+  <div class="page-head">
+    <div>
+      <div class="page-title" style="background:linear-gradient(90deg,#c4b5fd,#7dd3fc);-webkit-background-clip:text;background-clip:text">Quick Quote</div>
+      <div class="page-sub">Three steps: who it's for, what coverage, two numbers — the full proposal builds itself</div>
+    </div>
+  </div>
+  <div class="q-card" style="max-width:660px">
+    <h3>1 · Who is this quote for?</h3>
+    <input class="q-in" id="qqName" list="qqNames" placeholder="Start typing a lead, client, or new business name..." style="width:100%;font-size:14px;padding:12px;box-sizing:border-box" oninput="qqMatch()">
+    <datalist id="qqNames"></datalist>
+    <div id="qqPicked" style="font-size:11.5px;color:#86efac;margin-top:6px;min-height:14px"></div>
+    <div class="q-grid2" style="margin-top:8px">
+      <div class="fld"><label>State</label><select class="filter-select" id="qqState" style="width:100%"><option>FL</option><option>TX</option><option>PA</option><option>CA</option><option value="">Other</option></select></div>
+      <div class="fld"><label>What do they do?</label><input class="q-in" id="qqDesc" placeholder="e.g. Tree services"></div>
+    </div>
+  </div>
+  <div class="q-card" style="max-width:660px">
+    <h3>2 · Coverage <span style="color:var(--text-muted);font-weight:400;font-size:11px">— tap to select</span></h3>
+    <div class="q-chips" id="qqChips"></div>
+  </div>
+  <div class="q-card" style="max-width:660px">
+    <h3>3 · The numbers</h3>
+    <div class="q-grid2">
+      <div class="fld"><label>What the carrier quoted you (wholesale $)</label><input class="q-in" id="qqWholesale" placeholder="$" style="font-size:15px" oninput="qqTotals()"></div>
+      <div class="fld"><label>Your broker fee ($)</label><input class="q-in" id="qqFee" value="500" style="font-size:15px" oninput="qqTotals()"></div>
+    </div>
+    <div id="qqTotal" style="margin-top:12px;font-size:13.5px;color:var(--text-secondary);min-height:18px"></div>
+  </div>
+  <div class="q-card" style="max-width:660px">
+    <button class="act-btn primary" style="width:100%;justify-content:center;padding:14px;font-size:14px" onclick="qqBuild()">⚡ Build the proposal →</button>
+    <div id="qqErr" style="font-size:12px;color:#fca5a5;margin-top:8px;min-height:14px"></div>
+    <div style="font-size:11.5px;color:var(--text-muted);margin-top:4px">This fills the full proposal for you. On the next screen: <b>🖨 Print / Save PDF</b> for the client-ready quote, and <b>＋ Add to book</b> to save it to the shared CRM.</div>
+  </div>
+</div>
+
+<!-- ================= LIFECYCLE EXTENSIONS (Pipeline + Smart Intake) ================= -->
+<style>
+/* lifecycle bar */
+.life{display:flex;align-items:center;flex-wrap:wrap;gap:0;margin:2px 0 4px}
+.lifeseg{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text-muted)}
+.lifeseg .dot{width:22px;height:22px;border-radius:50%;background:var(--bg-card);border:1px solid var(--border-color);display:flex;align-items:center;justify-content:center;font-size:11px}
+.lifeseg.on{color:var(--text-primary)}.lifeseg.on .dot{background:linear-gradient(135deg,#6d5ef0,#06b6d4);border:none}
+.lifeseg.done{color:#4ade80}.lifeseg.done .dot{background:#22c55e;border:none;color:#04120a}
+.lifearrow{width:22px;height:1px;background:var(--border-color);margin:0 7px}
+@media(max-width:760px){.lifeseg span.lbl{display:none}.lifearrow{width:10px;margin:0 3px}}
+/* pipeline board */
+.pl-board{display:grid;grid-template-columns:repeat(5,minmax(180px,1fr));gap:12px;overflow-x:auto;padding-bottom:8px}
+.pl-col{background:var(--bg-surface);border:1px solid var(--border-color);border-radius:14px;padding:10px;min-height:120px}
+.pl-col.drop{border-color:var(--purple);box-shadow:0 0 0 1px var(--purple) inset}
+.pl-colhead{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;padding:4px 6px 10px;border-bottom:1px solid var(--border-color);margin-bottom:8px}
+.pl-colhead .cnt{margin-left:auto;background:#ffffff14;border-radius:20px;padding:1px 8px;font-size:11px;color:var(--text-secondary)}
+.pl-card{background:var(--bg-card);border:1px solid var(--border-color);border-radius:11px;padding:10px 11px;margin-bottom:9px;cursor:pointer;transition:.12s}
+.pl-card:hover{border-color:var(--border-subtle);background:var(--bg-card-hover)}
+.pl-card.dragging{opacity:.4}
+.pl-card .nm{font-weight:600;font-size:13px;margin-bottom:4px;line-height:1.25}
+.pl-card .meta{display:flex;flex-wrap:wrap;gap:5px;align-items:center;font-size:10.5px;color:var(--text-muted)}
+.pl-card .prem{color:#86efac;font-weight:600}
+.pl-move{display:flex;gap:6px;margin-top:8px}
+.pl-move button{flex:1;background:var(--bg-input);border:1px solid var(--border-color);color:var(--text-secondary);border-radius:7px;padding:4px 0;font-size:11px;cursor:pointer}
+.pl-move button:hover{background:var(--bg-card-hover);color:var(--text-primary)}
+.pl-move button:disabled{opacity:.3;cursor:default}
+/* intake wizard */
+.ix-wrap{max-width:900px}
+.ix-steps{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.ix-step{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-muted);padding:6px 10px;border-radius:8px;background:var(--bg-card);border:1px solid var(--border-color);cursor:pointer;user-select:none}
+.ix-step:hover{color:var(--text-primary);border-color:var(--purple)}
+.ix-step .n{width:18px;height:18px;border-radius:50%;background:#ffffff14;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700}
+.ix-step.done{color:#4ade80;border-color:#22c55e44}.ix-step.done .n{background:#22c55e;color:#04120a}
+.ix-step.cur{color:var(--text-primary);border-color:var(--purple);box-shadow:0 0 0 1px var(--purple) inset}.ix-step.cur .n{background:var(--purple);color:#fff}
+.ix-card{background:var(--bg-card);border:1px solid var(--border-color);border-radius:16px;padding:22px;margin-bottom:14px}
+.ix-card h3{margin:0 0 3px;font-size:17px}
+.ix-card .lead{color:var(--text-secondary);font-size:12.5px;margin:0 0 16px}
+.ix-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+@media(max-width:620px){.ix-grid{grid-template-columns:1fr}.pl-board{grid-template-columns:repeat(5,minmax(160px,1fr))}}
+.ix-chips{display:flex;flex-wrap:wrap;gap:8px}
+.ix-chip{background:var(--bg-input);border:1px solid var(--border-color);border-radius:10px;padding:10px 14px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:7px;user-select:none}
+.ix-chip:hover{background:var(--bg-card-hover)}
+.ix-chip.on{background:linear-gradient(135deg,#6d5ef022,#06b6d422);border-color:var(--purple);color:#fff;box-shadow:0 0 0 1px var(--purple) inset}
+.ix-chip .ck{opacity:0}.ix-chip.on .ck{opacity:1;color:#4ade80}
+.ix-out{background:#0b1120;border:1px solid var(--border-color);border-radius:12px;padding:15px 17px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;white-space:pre-wrap;color:#cbd5e1;max-height:340px;overflow:auto}
+.ix-reco{background:#3b82f612;border:1px solid #3b82f633;border-radius:9px;padding:9px 12px;font-size:12.5px;color:#93c5fd;margin-bottom:12px}
+.ix-nav{display:flex;gap:10px;align-items:center;margin-top:4px}
+.ix-review{display:grid;grid-template-columns:170px 1fr;gap:5px 14px;font-size:12.5px}
+.ix-review .k{color:var(--text-muted)}
+.ix-sec{grid-column:1/-1;font-size:10.5px;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);font-weight:700;border-top:1px solid var(--border-color);padding-top:10px;margin-top:8px}
+/* class-code search in intake */
+.ccbox{position:relative}
+.ccresults{position:absolute;z-index:50;left:0;right:0;top:100%;margin-top:4px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;box-shadow:0 12px 32px #0007;max-height:260px;overflow:auto}
+.ccresults div{padding:9px 12px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--border-subtle)}
+.ccresults div:hover{background:var(--bg-card-hover)}
+.ccresults .code{font-family:ui-monospace,monospace;font-size:11px;color:var(--cyan);margin-right:8px}
+.ccpick{margin-top:6px;font-size:12px;color:#86efac}
+.ccpick .x{color:var(--text-muted);cursor:pointer;margin-left:8px}
+/* markets */
+.mk-type{font-weight:600}
+.pill.mk-es{background:#8b5cf622;color:#c4b5fd;border-color:#8b5cf655}
+.pill.mk-adm{background:#22c55e22;color:#4ade80;border-color:#22c55e55}
+.pill.mk-unk{background:#ffffff0d;color:var(--text-muted);border-color:var(--border-subtle)}
+</style>
+
+<!-- ================= PIPELINE ================= -->
+<div class="view" id="view-pipeline">
+  <div class="page-head">
+    <div>
+      <div class="page-title" style="background:linear-gradient(90deg,#c4b5fd,#7dd3fc,#4ade80);-webkit-background-clip:text;background-clip:text">Deal Pipeline</div>
+      <div class="page-sub">Every account from first contact to renewal — move a card as the deal moves. Saves to the shared book.</div>
+    </div>
+    <div class="filters">
+      <input class="filter-input" id="plSearch" placeholder="Search deals..." oninput="renderPipeline()">
+      <select class="filter-select" id="plAgent" onchange="renderPipeline()"><option value="">All agents</option><option>James Bekhor</option><option>Michael Bank</option><option value="__none">Unassigned</option></select>
+      <button class="act-btn primary" onclick="ixStart()">✚ New intake</button>
+    </div>
+  </div>
+  <div class="kpi-row" id="plKpis"></div>
+  <div class="pl-board" id="plBoard"></div>
+  <div style="text-align:center;color:var(--text-muted);font-size:12px;margin-top:14px" id="plFoot"></div>
+</div>
+
+<!-- ================= SMART INTAKE ================= -->
+<div class="view" id="view-intake">
+  <div class="page-head">
+    <div>
+      <div class="page-title">Smart Intake</div>
+      <div class="page-sub">Lead → quote-ready in a couple of minutes. The form adapts to the risk; the application and submission build themselves.</div>
+    </div>
+  </div>
+  <div class="life" id="ixLife" style="margin-bottom:14px"></div>
+  <div class="ix-wrap">
+    <div class="ix-steps" id="ixSteps"></div>
+    <div id="ixStage"></div>
+    <div class="ix-nav" id="ixNav"></div>
+  </div>
+</div>
+<!-- ================= MARKETS ================= -->
+<div class="view" id="view-markets">
+  <div class="page-head">
+    <div>
+      <div class="page-title" style="background:linear-gradient(90deg,#4ade80,#7dd3fc);-webkit-background-clip:text;background-clip:text">Markets</div>
+      <div class="page-sub">Your carrier &amp; wholesaler directory — appetite, portals, and commissions. Pulled from Airtable.</div>
+    </div>
+    <div class="filters">
+      <input class="filter-input" id="mkSearch" placeholder="Search carrier, MGA, or line..." oninput="renderMarkets()">
+      <select class="filter-select" id="mkType" onchange="renderMarkets()"><option value="">All markets</option><option value="E&S">E&amp;S / Non-admitted</option><option value="Admitted">Admitted</option></select>
+      <select class="filter-select" id="mkKind" onchange="renderMarkets()"><option value="">Carriers &amp; MGAs</option><option value="carrier">Carriers</option><option value="mga">MGAs / Wholesalers</option></select>
+    </div>
+  </div>
+  <div class="kpi-row" id="mkKpis"></div>
+  <div class="stage" style="--stage-c:#4ade80">
+    <div class="stage-body"><div style="overflow-x:auto"><table id="marketsTable"></table></div></div>
+    <div class="stage-foot" id="mkFoot"></div>
+  </div>
+</div>
+
+<datalist id="ixBookList"></datalist>
+
+<!-- ================= CLIENT MODAL ================= -->
+<div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="mh-top">
+        <div class="avatar" id="mAvatar">–</div>
+        <div class="mh-title">
+          <h2 id="mName"></h2>
+          <div class="ops" id="mOps"></div>
+          <div class="contact" id="mContact"></div>
+        </div>
+        <div class="mh-actions">
+          <a class="act-btn primary" id="mDrive" target="_blank" rel="noopener">⧉ Open Drive Folder</a>
+          <button class="close-x" onclick="closeModal()">✕</button>
+        </div>
+      </div>
+      <div class="mtabs">
+        <button class="mtab active" data-mtab="overview" onclick="mTab('overview')">Business Details</button>
+        <button class="mtab" data-mtab="policies" onclick="mTab('policies')">Policies <span id="mPolCount"></span></button>
+        <button class="mtab" data-mtab="notes" onclick="mTab('notes')">Notes & Files</button><button class="mtab" data-mtab="edit" onclick="mEdit()" style="color:#c4b5fd">✎ Edit</button>
+      </div>
+    </div>
+    <div class="modal-body" id="mBody"></div>
+  </div>
+</div>
+
+
+<div id="authWrap" style="position:fixed;inset:0;z-index:2000;background:var(--bg-base);display:flex;align-items:center;justify-content:center">
+  <div style="width:350px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:16px;padding:28px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px"><div class="logo-mark">⚡</div><div style="font-weight:800;font-size:18px;letter-spacing:2px">ZENIX CRM</div></div>
+    <div id="authMsg" style="font-size:12px;color:var(--text-secondary);margin-bottom:16px">Sign in with your agency account</div>
+    <div id="authForm">
+      <input id="authEmail" class="filter-input" style="width:100%;margin-bottom:8px;box-sizing:border-box" placeholder="Email" type="email" autocomplete="username">
+      <input id="authPass" class="filter-input" style="width:100%;margin-bottom:12px;box-sizing:border-box" placeholder="Password" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doAuth()">
+      <button id="authBtn" class="act-btn primary" style="width:100%;justify-content:center;padding:10px" onclick="doAuth()">Sign in</button>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:12px">First time here? <a href="#" id="authToggle" onclick="toggleAuthMode(event)" style="color:var(--cyan)">Create your account</a></div>
+    </div>
+    <div id="authErr" style="font-size:11.5px;color:#fca5a5;margin-top:10px;min-height:14px"></div>
+  </div>
+</div>
+<div class="chart-tip" id="chartTip"></div>
+<script>
+let CLIENTS = [];
+let SIDECAR = {};
+let DATA_AS_OF = '—';
+const SUPA_URL = 'https://dkpjagtlwyrsvdwseden.supabase.co';
+const SUPA_KEY = 'sb_publishable_QKXeVPJBq-X_AbeJy6wwiA_r61KVEDE';
+const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+/* ---------- helpers ---------- */
+const $ = id => document.getElementById(id);
+const esc = s => (s==null?'':String(s)).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt$ = n => n==null?'—':'$'+Math.round(n).toLocaleString('en-US');
+const NOW = new Date(); NOW.setHours(0,0,0,0);
+function pd(s){ if(!s) return null; const m=/^(\d{4})-(\d{2})-(\d{2})/.exec(s); return m? new Date(+m[1],+m[2]-1,+m[3]) : null; }
+function days(d){ return d==null?null:Math.round((d-NOW)/86400000); }
+function fdate(s){ const d=pd(s); return d? d.toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'numeric'}) : '—'; }
+function initials(n){ return (n||'?').replace(/[^a-zA-Z ]/g,'').trim().split(/\s+/).slice(0,2).map(w=>w[0]||'').join('').toUpperCase()||'?'; }
+const AV_COLORS=['#6d5ef0,#3b82f6','#06b6d4,#22c55e','#ec4899,#8b5cf6','#f59e0b,#ef4444','#22c55e,#06b6d4','#8b5cf6,#ec4899'];
+function avColor(n){ let h=0; for(const c of (n||'')) h=(h*31+c.charCodeAt(0))|0; return AV_COLORS[Math.abs(h)%AV_COLORS.length]; }
+
+/* ---------- derive per-client ---------- */
+function decorate(){
+CLIENTS.forEach((c,i)=>{
+  for(const k of Object.keys(c)) if(k.startsWith('_') && k!=='_rowId') delete c[k];
+  c._id=i;
+  const pols=c.policies||[];
+  let nextExp=null, activePrem=0, hasActive=false, lastCancel=null, totPrem=0;
+  pols.forEach(p=>{
+    const exp=pd(p.expirationDate);
+    if(typeof p.premium==='number') totPrem+=p.premium;
+    const boundActive = p.status==='bound' && exp && exp>=NOW;
+    if(boundActive){ hasActive=true; if(typeof p.premium==='number') activePrem+=p.premium; if(!nextExp||exp<nextExp) nextExp=exp; }
+    if(p.status==='expired'||(p.status==='bound'&&exp&&exp<NOW)){
+      c._cancelled=true;
+      const endD=(exp&&exp<=NOW)?exp:null; // mid-term cancels carry a future expiration; actual end date unknown
+      if(endD&&(!lastCancel||endD>lastCancel)) lastCancel=endD;
+    }
+  });
+  c._nextExp=nextExp; c._d=days(nextExp); c._activePrem=activePrem; c._totPrem=totPrem;
+  c._hasActive=hasActive; c._lastEnd=lastCancel;
+  const anyBound=pols.some(p=>p.status==='bound'||p.status==='expired');
+  if(hasActive) c._bucket = c._d<=30?'due30':(c._d<=60?'due60':(c._d<=90?'due90':'active'));
+  else if(c.source==='email') c._bucket='review'; // bound via email, no dated docs — needs Drive folder
+  else if(anyBound) c._bucket='lapsed';
+  else if(pols.some(p=>p.status==='quoted')||c.stage==='quoted') c._bucket='quoted';
+  else c._bucket='review';
+  c._lines=[...new Set(pols.map(p=>p.line).filter(Boolean))];
+  c._carriers=[...new Set(pols.map(p=>p.carrier).filter(Boolean))];
+});
+}
+const AGENTS=['James Bekhor','Michael Bank'];
+const AGENT_COLORS={'James Bekhor':'#6d5ef0,#3b82f6','Michael Bank':'#ec4899,#8b5cf6'};
+function agentCell(c){
+  if(!c.assignedTo) return '<span class="pill p-unknown" style="opacity:.7">Unassigned</span>';
+  return `<span class="pill" style="background:#ffffff0d;border-color:var(--border-subtle);color:var(--text-primary)"><span class="avatar" style="width:17px;height:17px;font-size:8px;background:linear-gradient(135deg,${AGENT_COLORS[c.assignedTo]||'#64748b,#94a3b8'})">${initials(c.assignedTo)}</span>${esc(c.assignedTo)}</span>`;
+}
+
+const BUCKETS=[
+ {key:'due30', title:'Renewal Due — Next 30 Days', sub:'Act now: policies expiring within a month', c:'#ef4444', icon:'🔥'},
+ {key:'due60', title:'Renewal Due — 31–60 Days', sub:'Start remarketing and gathering updated info', c:'#f59e0b', icon:'⏳'},
+ {key:'due90', title:'Renewal Due — 61–90 Days', sub:'On the radar for early quoting', c:'#eab308', icon:'📅'},
+ {key:'active', title:'Active — In Force (90+ days out)', sub:'Bound policies with time before renewal', c:'#22c55e', icon:'🛡'},
+ {key:'quoted', title:'Quoted — Pending Decision', sub:'Quotes or proposals out, nothing bound yet', c:'#3b82f6', icon:'📋'},
+ {key:'lapsed', title:'Lapsed / Cancelled — Win-Back', sub:'Previously bound, no active coverage on file', c:'#a855f7', icon:'♻'},
+ {key:'review', title:'Needs Review', sub:'Email-only clients missing Drive folders + unreadable folders', c:'#64748b', icon:'❓'}
+];
+const B_BY_KEY=Object.fromEntries(BUCKETS.map(b=>[b.key,b]));
+
+/* ---------- nav ---------- */
+function go(v){
+  document.querySelectorAll('.view').forEach(e=>e.classList.remove('active'));
+  const owner={intake:null,qq:null,quote:null}[v]===undefined?v:null;
+  document.querySelectorAll('.nav-btn').forEach(e=>e.classList.toggle('active',!!owner&&e.dataset.view===owner));
+  $('view-'+v).classList.add('active');
+  window.scrollTo({top:0});
+}
+function globalSearch(q){ go('clients'); $('clSearch').value=q; renderClients(); }
+function navNewToggle(ev){ ev.stopPropagation(); $('navNewMenu').classList.toggle('open'); }
+function navNewGo(v){ $('navNewMenu').classList.remove('open'); if(v==='intake'){ ixStart(); } else { go(v); if(v==='qq') qqInit(); } }
+document.addEventListener('click', e=>{ const m=$('navNewMenu'); if(m && m.classList.contains('open') && !e.target.closest('#navNew')) m.classList.remove('open'); });
+
+/* ---------- shared row ---------- */
+function clientRow(c, showExp=true){
+  const dcls = c._d==null?'':(c._d<=30?'d-red':(c._d<=60?'d-amber':'d-ok'));
+  const contact = c.phone?`<span class="phone">✆ ${esc(c.phone)}</span>`:(c.email?`<span style="color:var(--text-secondary);font-size:12px">${esc(c.email)}</span>`:'<span style="color:var(--text-muted)">—</span>');
+  const st=c.state?` · ${esc(c.state)}`:'';
+  const prem=c._hasActive?c._activePrem:c._totPrem;
+  const expCell = showExp ? (c._nextExp? `<span class="date-chip">${fdate(c._nextExp.toISOString())}</span><span class="days ${dcls}">${c._d}d</span>` : (c._lastEnd?`<span class="date-chip" style="color:#f87171">ended ${fdate(c._lastEnd.toISOString())}</span>`:(c._cancelled?'<span class="date-chip" style="color:#f87171">cancelled</span>':'<span style="color:var(--text-muted)">—</span>'))):'';
+  const flag=(c.emailFlags&&c.emailFlags.length)?`<span title="${esc(c.emailFlags.join(' | '))}" style="color:#fbbf24;margin-left:5px;font-size:11px">⚑</span>`:'';
+  const openBtn=c.driveUrl?`<a class="act-btn primary" href="${esc(c.driveUrl)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">⧉ Open</a>`:`<span class="act-btn" style="opacity:.45;cursor:default">No folder</span>`;
+  return `<tr onclick="openModal(${c._id})">
+    <td><div class="biz"><div class="avatar" style="background:linear-gradient(135deg,${avColor(c.businessName)})">${initials(c.businessName)}</div>
+      <div><b>${esc(c.businessName||c.folderName)}${flag}</b><span>${esc(c.operations||'')}${st}</span></div></div></td>
+    <td>${c._lines.length?c._lines.map(l=>`<span class="pill line">${esc(l)}</span>`).join(''):'<span style="color:var(--text-muted)">—</span>'}</td>
+    <td>${agentCell(c)}</td>
+    <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-secondary);font-size:12.5px">${esc(c._carriers[0]||'—')}${c._carriers.length>1?` <span style="color:var(--text-muted)">+${c._carriers.length-1}</span>`:''}</td>
+    <td class="prem">${prem?fmt$(prem):'—'}${(()=>{const fc=c.feeCheck;if(!fc)return '';if(typeof fc.brokerFee==='number'&&fc.brokerFee>0)return `<div style="font-size:10px;color:#4ade80">fee ${fmt$(fc.brokerFee)}</div>`;return c._hasActive?'<div style="font-size:10px;color:#fbbf24">⚠ no fee doc</div>':'';})()}</td>
+    ${showExp?`<td>${expCell}</td>`:''}
+    <td>${contact}</td>
+    <td><div class="actions">
+      <button class="act-btn" onclick="event.stopPropagation();openModal(${c._id})">👁 View</button>
+      ${openBtn}
+    </div></td></tr>`;
+}
+const TABLE_HEAD = (showExp=true)=>`<thead><tr><th>Business Name</th><th>Coverage</th><th>Assigned To</th><th>Carrier</th><th>Premium</th>${showExp?'<th>Expires</th>':''}<th>Contact</th><th style="text-align:right">Actions</th></tr></thead>`;
+
+/* ---------- priority view ---------- */
+let pvFilter=null;
+function pvMatch(c){
+  const q=($('pvSearch').value||'').toLowerCase();
+  const ln=$('pvLine').value, cr=$('pvCarrier').value, stt=$('pvState').value, ag=$('pvAgent').value;
+  if(q && !((c.businessName||'')+' '+(c.operations||'')+' '+(c.folderName||'')+' '+c._carriers.join(' ')).toLowerCase().includes(q)) return false;
+  if(ln && !c._lines.includes(ln)) return false;
+  if(cr && !c._carriers.some(x=>x===cr)) return false;
+  if(stt && c.state!==stt) return false;
+  if(ag==='__none' && c.assignedTo) return false;
+  if(ag && ag!=='__none' && c.assignedTo!==ag) return false;
+  return true;
+}
+function renderPriority(){
+  const matches=CLIENTS.filter(pvMatch);
+  const by={}; BUCKETS.forEach(b=>by[b.key]=[]);
+  matches.forEach(c=>by[c._bucket].push(c));
+  by.due30.sort((a,b)=>a._d-b._d); by.due60.sort((a,b)=>a._d-b._d); by.due90.sort((a,b)=>a._d-b._d);
+  by.active.sort((a,b)=>(a._d??9e9)-(b._d??9e9));
+  by.lapsed.sort((a,b)=>(b._lastEnd??0)-(a._lastEnd??0));
+  const totalActive=matches.filter(c=>c._hasActive).length;
+  const kpis=[
+   {k:'due30',cls:'k-red',ic:'🔥',t:'Hot Renewals',p:'Due in 30 days',n:by.due30.length},
+   {k:'due60',cls:'k-amber',ic:'⏳',t:'Warm',p:'Due 31–60 days',n:by.due60.length},
+   {k:'due90',cls:'k-cyan',ic:'📅',t:'Upcoming',p:'Due 61–90 days',n:by.due90.length},
+   {k:'active',cls:'k-green',ic:'🛡',t:'In Force',p:`${totalActive} active · 90d+ out`,n:by.active.length},
+   {k:'lapsed',cls:'k-purple',ic:'♻',t:'Win-Back',p:'Lapsed / cancelled',n:by.lapsed.length},
+   {k:null,cls:'k-all',ic:'👥',t:'All',p:'Complete book overview',n:matches.length}
+  ];
+  $('pvKpis').innerHTML=kpis.map(k=>`<div class="kpi ${k.cls} ${pvFilter===k.k?'selected':''}" onclick="pvKpi('${k.k}')">
+    <span class="badge">${k.n}</span><span class="ic">${k.ic}</span><h4>${k.t}</h4><p>${k.p}</p></div>`).join('');
+  const order = pvFilter? BUCKETS.filter(b=>b.key===pvFilter||((pvFilter==='active')&&false)) : BUCKETS;
+  $('pvStages').innerHTML = order.map(b=>{
+    const rows=by[b.key];
+    if(pvFilter && b.key!==pvFilter) return '';
+    if(!rows.length && pvFilter!==b.key) return '';
+    return `<div class="stage" style="--stage-c:${b.c}" id="stage-${b.key}">
+      <div class="stage-head" onclick="this.parentElement.classList.toggle('collapsed')">
+        <div class="stage-dot"></div><div class="stage-title">${b.icon} ${b.title}</div>
+        <span class="stage-count">${rows.length}</span><span class="stage-sub">${b.sub}</span>
+        <div class="sp"></div><button class="collapse-btn">Collapse ▾</button>
+      </div>
+      <div class="stage-body"><div style="overflow-x:auto"><table>${TABLE_HEAD()}<tbody>
+        ${rows.length?rows.map(c=>clientRow(c)).join(''):'<tr><td colspan="8"><div class="empty-note">No clients in this bucket with current filters</div></td></tr>'}
+      </tbody></table></div></div>
+      <div class="stage-foot">● ${rows.length} record${rows.length===1?'':'s'}</div>
+    </div>`;
+  }).join('');
+  $('pvFooter').textContent=`Showing ${matches.length} of ${CLIENTS.length} client profiles · data extracted ${DATA_AS_OF}`;
+}
+function pvKpi(k){ pvFilter = (k==='null'||k===pvFilter)?null:(k==='undefined'?null:k); if(k===null||k==='null') pvFilter=null; renderPriority(); }
+
+/* ---------- dashboard ---------- */
+function svgBar(items, {money=true, color='#8b5cf6', h=190}={}){
+  if(!items.length) return '<div class="empty-note">No data</div>';
+  const max=Math.max(...items.map(i=>i.v),1);
+  const bw=100/items.length;
+  let bars='', labels='';
+  items.forEach((it,i)=>{
+    const bh=Math.max(it.v/max*(h-38),2);
+    const x=i*bw+bw*0.18, w=bw*0.64;
+    bars+=`<g class="bar-g" data-l="${esc(it.l)}" data-v="${money?fmt$(it.v):it.v}" data-s="${esc(it.s||'')}">
+      <rect x="${x}%" y="${h-24-bh}" width="${w}%" height="${bh}" rx="4" fill="${it.c||color}" opacity="0.92"></rect>
+      <rect x="${i*bw}%" y="0" width="${bw}%" height="${h-24}" fill="transparent"></rect></g>`;
+    labels+=`<text x="${i*bw+bw/2}%" y="${h-8}" text-anchor="middle" fill="#64748b" font-size="10">${esc(it.l)}</text>`;
+  });
+  return `<div class="chart-wrap"><svg width="100%" height="${h}" onmousemove="chartHover(event)" onmouseleave="chartOut()">
+    <line x1="0" x2="100%" y1="${h-24}" y2="${h-24}" stroke="#1e293b"/>${bars}${labels}</svg></div>`;
+}
+function svgHBar(items,{money=true,color='#06b6d4'}={}){
+  if(!items.length) return '<div class="empty-note">No data</div>';
+  const max=Math.max(...items.map(i=>i.v),1);
+  return `<div>`+items.map(it=>`<div class="leader-row" style="gap:12px">
+    <div class="nm" style="flex:0 0 150px;font-size:11.5px">${esc(it.l)}</div>
+    <div style="flex:1;background:#ffffff08;border-radius:5px;height:16px;position:relative;overflow:hidden">
+      <div style="position:absolute;left:0;top:1px;bottom:1px;width:${Math.max(it.v/max*100,1.5)}%;background:${it.c||color};border-radius:4px;opacity:.9"></div></div>
+    <div class="val">${money?fmt$(it.v):it.v}</div></div>`).join('')+`</div>`;
+}
+function chartHover(ev){
+  const g=ev.target.closest('.bar-g'); const tip=$('chartTip');
+  if(!g){ tip.style.display='none'; return; }
+  tip.innerHTML=`<b>${g.dataset.v}</b><span>${g.dataset.l}${g.dataset.s?' · '+g.dataset.s:''}</span>`;
+  tip.style.display='block';
+  tip.style.left=(ev.pageX+14)+'px'; tip.style.top=(ev.pageY-14)+'px';
+}
+function chartOut(){ $('chartTip').style.display='none'; }
+
+function renderDashboard(){
+  $('dashStamp').textContent='extracted '+DATA_AS_OF;
+  const active=CLIENTS.filter(c=>c._hasActive);
+  const inForce=active.reduce((s,c)=>s+c._activePrem,0);
+  const due90=CLIENTS.filter(c=>c._d!=null&&c._d<=90);
+  const due90Prem=due90.reduce((s,c)=>s+c._activePrem,0);
+  const lapsed=CLIENTS.filter(c=>c._bucket==='lapsed');
+  const lapsedPrem=lapsed.reduce((s,c)=>s+c._totPrem,0);
+  const nPol=CLIENTS.reduce((s,c)=>s+(c.policies||[]).length,0);
+  // monthly renewal premium next 12 months
+  const months=[]; const mNames=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  for(let i=0;i<12;i++){ const d=new Date(NOW.getFullYear(),NOW.getMonth()+i,1); months.push({y:d.getFullYear(),m:d.getMonth(),l:mNames[d.getMonth()],v:0,n:0}); }
+  CLIENTS.forEach(c=>(c.policies||[]).forEach(p=>{
+    const exp=pd(p.expirationDate);
+    if(p.status==='bound'&&exp&&exp>=NOW){ const idx=(exp.getFullYear()-NOW.getFullYear())*12+(exp.getMonth()-NOW.getMonth()); if(idx>=0&&idx<12){ months[idx].v+=(typeof p.premium==='number'?p.premium:0); months[idx].n++; } }
+  }));
+  // premium by line
+  const byLine={};
+  CLIENTS.forEach(c=>(c.policies||[]).forEach(p=>{ if(p.status==='bound'&&typeof p.premium==='number'){ const l=p.line||'Other'; byLine[l]=(byLine[l]||0)+p.premium; }}));
+  const lineItems=Object.entries(byLine).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([l,v])=>({l,v}));
+  // top carriers
+  const byCar={};
+  CLIENTS.forEach(c=>(c.policies||[]).forEach(p=>{ if(p.carrier){ const k=p.carrier.replace(/ \(.*\)/,'').replace(/ (Insurance|Specialty|Indemnity)( Company| Insurance Company)?$/,''); byCar[k]=(byCar[k]||0)+1; }}));
+  const carItems=Object.entries(byCar).sort((a,b)=>b[1]-a[1]).slice(0,10).map(([l,v])=>({l,v}));
+  // biggest upcoming renewals
+  const upcoming=CLIENTS.filter(c=>c._d!=null&&c._d<=120&&c._activePrem>0).sort((a,b)=>b._activePrem-a._activePrem).slice(0,8);
+
+  $('dashGrid').innerHTML=`
+   <div class="card hero-card" style="grid-column:span 3"><h3><span class="bar-ind"></span>Premium In Force</h3>
+     <div class="big-num">${fmt$(inForce)}</div><div class="sub-num">${active.length} active clients · ${nPol} policies on file</div></div>
+   <div class="card" style="grid-column:span 3"><h3><span class="bar-ind" style="background:#ef4444"></span>Renewing ≤ 90 Days</h3>
+     <div class="big-num" style="color:#fca5a5">${fmt$(due90Prem)}</div><div class="sub-num">${due90.length} clients — book these before they shop</div></div>
+   <div class="card" style="grid-column:span 3"><h3><span class="bar-ind" style="background:#a855f7"></span>Win-Back Pool</h3>
+     <div class="big-num" style="color:#c4b5fd">${fmt$(lapsedPrem)}</div><div class="sub-num">${lapsed.length} lapsed/cancelled clients to re-engage</div></div>
+   <div class="card" style="grid-column:span 3"><h3><span class="bar-ind" style="background:#22c55e"></span>Broker Fees Documented</h3>
+     <div class="big-num" style="color:#86efac">${fmt$((SIDECAR.feeSummary||{}).documentedTotal||0)}</div>
+     <div class="sub-num">${(SIDECAR.feeSummary||{}).documented||0} of ${(SIDECAR.feeSummary||{}).checked||0} deals verified · ${(SIDECAR.feeSummary||{}).activeMissing||0} active deals missing fee docs</div></div>
+   <div class="card" style="grid-column:span 8"><h3><span class="bar-ind"></span>Renewal Premium by Month — Next 12 Months</h3>
+     ${svgBar(months.map(m=>({l:m.l,v:m.v,s:m.n+' policies'})),{h:210})}</div>
+   <div class="card" style="grid-column:span 4"><h3><span class="bar-ind" style="background:#22c55e"></span>Largest Upcoming Renewals (120d)</h3>
+     ${upcoming.map(c=>`<div class="leader-row" style="cursor:pointer" onclick="openModal(${c._id})">
+        <div class="avatar" style="width:26px;height:26px;font-size:9px;background:linear-gradient(135deg,${avColor(c.businessName)})">${initials(c.businessName)}</div>
+        <div class="nm">${esc(c.businessName)}<div style="font-size:10px;color:var(--text-muted)">${fdate(c._nextExp.toISOString())} · ${c._d}d</div></div>
+        <div class="val">${fmt$(c._activePrem)}</div></div>`).join('')||'<div class="empty-note">None found</div>'}</div>
+   <div class="card" style="grid-column:span 4"><h3><span class="bar-ind" style="background:#ef4444"></span>Receivables & Billing</h3>
+     ${(SIDECAR.receivables||[]).slice(0,7).map(r=>`<div class="leader-row">
+       <div class="nm">${esc(r.client)}<div style="font-size:10px;color:var(--text-muted)">${r.dueDate?('due '+esc(r.dueDate)):''} ${esc(r.status||'')}</div></div>
+       <div class="val" style="color:#fca5a5">${r.amount?fmt$(r.amount):'—'}</div></div>`).join('')||'<div class="empty-note">No open requests</div>'}
+     <div style="font-size:10.5px;color:var(--text-muted);margin-top:8px">${(SIDECAR.receivables||[]).length} open client payment requests · ${(SIDECAR.vendorBills||[]).length} vendor bills flagged (see Tasks)</div></div>
+   <div class="card" style="grid-column:span 4"><h3><span class="bar-ind" style="background:#ec4899"></span>Sales Leaderboard</h3>
+     ${(()=>{ const rows={}; CLIENTS.forEach(c=>{ const a=c.assignedTo||'Unassigned'; rows[a]=rows[a]||{n:0,p:0}; if(c._hasActive){rows[a].n++; rows[a].p+=c._activePrem;} });
+       return [...AGENTS,'Unassigned'].filter(a=>rows[a]).map(a=>`<div class="leader-row">
+        <div class="avatar" style="width:26px;height:26px;font-size:9px;background:linear-gradient(135deg,${AGENT_COLORS[a]||'#64748b,#94a3b8'})">${initials(a)}</div>
+        <div class="nm">${esc(a)}<div style="font-size:10px;color:var(--text-muted)">${rows[a].n} active deals</div></div>
+        <div class="val">${fmt$(rows[a].p)}</div></div>`).join(''); })()}
+     <div style="font-size:10.5px;color:var(--text-muted);margin-top:10px">Deal attribution pending email verification — most deals not yet assigned</div></div>
+   <div class="card" style="grid-column:span 4"><h3><span class="bar-ind" style="background:#06b6d4"></span>Bound Premium by Line</h3>${svgHBar(lineItems,{color:'#8b5cf6'})}</div>
+   <div class="card" style="grid-column:span 8"><h3><span class="bar-ind" style="background:#06b6d4"></span>Top Carriers by Policy Count</h3>${svgHBar(carItems,{money:false})}</div>
+   <div class="card" style="grid-column:span 4"><h3><span class="bar-ind" style="background:#22c55e"></span>Data Verification</h3>
+     <div class="stat-line"><span>Drive folders extracted</span><b>270</b></div>
+     <div class="stat-line"><span>Email-verified spot checks</span><b>8/8 ✓</b></div>
+     <div class="stat-line"><span>Policy events from email</span><b>238</b></div>
+     <div class="stat-line"><span>Email-only clients (need folders)</span><b>${CLIENTS.filter(c=>c.source==='email').length}</b></div>
+     <div class="stat-line"><span>2026 payment receipts</span><b>${(SIDECAR.receiptsSummary||{}).receipts2026||'—'}</b></div>
+     <div style="font-size:10.5px;color:var(--text-muted);margin-top:8px">${esc(SIDECAR.verifiedAt||'')}</div></div>`;
+}
+
+/* ---------- clients view ---------- */
+function renderClients(){
+  const q=($('clSearch').value||'').toLowerCase();
+  const st=$('clStage').value, sort=$('clSort').value;
+  let rows=CLIENTS.filter(c=>{
+    if(q && !((c.businessName||'')+' '+(c.operations||'')+' '+(c.folderName||'')+' '+(c.state||'')+' '+c._carriers.join(' ')).toLowerCase().includes(q)) return false;
+    if(st==='active'&&!c._hasActive) return false;
+    if(st==='due'&&!(c._d!=null&&c._d<=90)) return false;
+    if(st==='lapsed'&&c._bucket!=='lapsed') return false;
+    if(st==='quoted'&&c._bucket!=='quoted') return false;
+    return true;
+  });
+  if(sort==='name') rows.sort((a,b)=>(a.businessName||'').localeCompare(b.businessName||''));
+  else if(sort==='premium') rows.sort((a,b)=>(b._hasActive?b._activePrem:b._totPrem)-(a._hasActive?a._activePrem:a._totPrem));
+  else if(sort==='recent') rows.sort((a,b)=>(b.lastDocDate||'').localeCompare(a.lastDocDate||''));
+  else rows.sort((a,b)=>(a._d??9e9)-(b._d??9e9));
+  $('clientsTable').innerHTML=TABLE_HEAD()+'<tbody>'+(rows.map(c=>clientRow(c)).join('')||'<tr><td colspan="8"><div class="empty-note">No matches</div></td></tr>')+'</tbody>';
+  $('clientsFoot').textContent=`● ${rows.length} of ${CLIENTS.length} clients`;
+  $('clientsSub').textContent=`${CLIENTS.length} clients pulled from the Google Drive Clients folder`;
+}
+
+/* ---------- tasks ---------- */
+let taskFilter=null;
+function buildTasks(){
+  const t=[];
+  (SIDECAR.receivables||[]).forEach(r=>{
+    const due=pd(r.dueDate);
+    t.push({type:'Collect',cat:'collect',pr:(due&&days(due)<3)?'high':'normal',due,client:findClient(r.client),
+      title:`Collect ${r.amount?fmt$(r.amount):'payment'} — ${r.client}${r.status?' ('+r.status+')':''}`,extern:r.client});
+  });
+  (SIDECAR.vendorBills||[]).forEach(v=>{
+    t.push({type:'Vendor bill',cat:'vendor',pr:/delinq|suspen/i.test(v.status||v.note||'')?'high':'normal',due:null,client:null,
+      title:`${v.vendor}: ${v.status||''} ${v.amount?fmt$(v.amount):''}`.trim(),extern:v.vendor});
+  });
+  CLIENTS.forEach(c=>{
+    if(c.financeStatus) t.push({type:'Financing',cat:'finance',pr:/cancel/i.test(c.financeStatus)?'high':'normal',due:null,client:c,
+      title:`IPFS at risk — ${c.financeStatus}`});
+    if(c.feeCheck && c._hasActive && !(typeof c.feeCheck.brokerFee==='number'&&c.feeCheck.brokerFee>0))
+      t.push({type:'Fee check',cat:'fee',pr:'normal',due:null,client:c,
+        title:`Broker fee not documented — ${c.feeCheck.retailTotal||c.feeCheck.wholesaleTotal||c.feeCheck.receiptAmount?'partial docs on file, complete the pair':'no proposal/receipt/invoice in folder'}`});
+    if(c._d!=null&&c._d<=90) t.push({type:'Renewal',cat:'renewal',pr:c._d<=30?'high':'normal',due:c._nextExp,client:c,
+      title:`Start renewal — ${c._lines.join(', ')||'coverage'} expires ${fdate(c._nextExp.toISOString())}`});
+    if(c._bucket==='lapsed'){
+      if(c._lastEnd){ const since=Math.round((NOW-c._lastEnd)/86400000);
+        if(since<=180) t.push({type:'Win-back',cat:'winback',pr:since<=45?'high':'normal',due:null,client:c,
+          title:`Re-engage — coverage ended ${fdate(c._lastEnd.toISOString())} (${since}d ago)`}); }
+      else if(c._cancelled) t.push({type:'Win-back',cat:'winback',pr:'normal',due:null,client:c,
+        title:'Re-engage — policy cancelled mid-term (see folder for details)'});
+    }
+    if(c._bucket==='quoted') t.push({type:'Follow up',cat:'quote',pr:'normal',due:null,client:c,title:'Quote outstanding — follow up to bind'});
+    if(c._bucket==='review') t.push({type:'Data',cat:'review',pr:'low',due:null,client:c,title:'Folder has no readable policy data — review'});
+  });
+  t.sort((a,b)=>{ const pv={high:0,normal:1,low:2}; if(pv[a.pr]!==pv[b.pr]) return pv[a.pr]-pv[b.pr]; return (a.due??9e15)-(b.due??9e15); });
+  return t;
+}
+function renderTasks(){
+  const tasks=buildTasks();
+  const over=tasks.filter(t=>t.due&&days(t.due)<0).length;
+  const t30=tasks.filter(t=>t.due&&days(t.due)>=0&&days(t.due)<=30).length;
+  const wb=tasks.filter(t=>t.cat==='winback').length;
+  const rest=tasks.length-over-t30-wb;
+  const kpis=[
+   {k:'high',cls:'k-red',ic:'⚠',n:tasks.filter(t=>t.pr==='high').length,t:'High Priority'},
+   {k:'renewal',cls:'k-amber',ic:'🕐',n:tasks.filter(t=>t.cat==='renewal').length,t:'Renewals'},
+   {k:'collect',cls:'k-red',ic:'💵',n:tasks.filter(t=>t.cat==='collect').length,t:'Collections'},
+   {k:'fee',cls:'k-amber',ic:'🧾',n:tasks.filter(t=>t.cat==='fee').length,t:'Fee Checks'},
+   {k:'finance',cls:'k-amber',ic:'🏦',n:tasks.filter(t=>t.cat==='finance').length,t:'Financing'},
+   {k:'winback',cls:'k-purple',ic:'♻',n:wb,t:'Win-Backs'},
+   {k:null,cls:'k-green',ic:'✓',n:tasks.length,t:'All Tasks'}];
+  $('taskKpis').innerHTML=kpis.map(k=>`<div class="kpi ${k.cls} ${taskFilter===k.k?'selected':''}" onclick="taskFilter=(taskFilter==='${k.k}')?null:${k.k===null?'null':`'${k.k}'`};renderTasks()">
+    <span class="badge">${k.n}</span><span class="ic">${k.ic}</span><h4>${k.t}</h4></div>`).join('');
+  let rows=tasks;
+  if(taskFilter==='high') rows=tasks.filter(t=>t.pr==='high');
+  else if(taskFilter) rows=tasks.filter(t=>t.cat===taskFilter);
+  $('tasksTable').innerHTML=`<thead><tr><th>Task</th><th>Type</th><th>Client</th><th>Due</th><th>Priority</th><th style="text-align:right">Actions</th></tr></thead><tbody>`+
+   (rows.slice(0,250).map(t=>{
+     const d=t.due?days(t.due):null;
+     const dcls=d==null?'':(d<=14?'d-red':(d<=45?'d-amber':'d-ok'));
+     const catPill=t.cat==='renewal'?'p-due':(t.cat==='winback'||t.cat==='collect'?'p-expired':(t.cat==='quote'||t.cat==='finance'?'p-quoted':'p-unknown'));
+     const cname=t.client?(t.client.businessName||t.client.folderName):(t.extern||'—');
+     return `<tr ${t.client?`onclick="openModal(${t.client._id})"`:''}>
+      <td style="max-width:340px">${esc(t.title)}</td>
+      <td><span class="pill ${catPill}">${t.type}</span></td>
+      <td style="font-weight:600">${esc(cname)}</td>
+      <td>${t.due?`<span class="date-chip">${fdate(t.due.toISOString())}</span><span class="days ${dcls}">${d}d</span>`:'—'}</td>
+      <td><span class="pill ${t.pr==='high'?'p-expired':(t.pr==='normal'?'p-quoted':'p-unknown')}">${t.pr}</span></td>
+      <td><div class="actions">${t.client&&t.client.driveUrl?`<a class="act-btn primary" href="${esc(t.client.driveUrl)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">⧉ Open</a>`:''}</div></td></tr>`;
+   }).join('')||'<tr><td colspan="6"><div class="empty-note">No tasks</div></td></tr>')+'</tbody>';
+  $('tasksFoot').textContent=`● ${rows.length} tasks generated from book data`;
+}
+
+/* ---------- modal ---------- */
+let mClient=null;
+function openModal(id){
+  mClient=CLIENTS[id];
+  const c=mClient;
+  $('mAvatar').textContent=initials(c.businessName);
+  $('mAvatar').style.background=`linear-gradient(135deg,${avColor(c.businessName)})`;
+  const b=B_BY_KEY[c._bucket];
+  $('mName').innerHTML=`${esc(c.businessName||c.folderName)} <span class="pill" style="background:${b.c}22;color:${b.c};border-color:${b.c}55;vertical-align:3px">${b.title.split('—')[0].trim()}</span>`;
+  $('mOps').textContent=[c.operations,c.dba?('DBA '+c.dba):null].filter(Boolean).join(' · ')||'';
+  $('mContact').innerHTML=[
+    c.contactName?`<span>👤 ${esc(c.contactName)}</span>`:null,
+    c.phone?`<span class="phone">✆ ${esc(c.phone)}</span>`:null,
+    c.email?`<span>✉ ${esc(c.email)}</span>`:null,
+    (c.city||c.state)?`<span>📍 ${esc([c.city,c.state].filter(Boolean).join(', '))}</span>`:null
+  ].filter(Boolean).join('')||'<span style="color:var(--text-muted)">No contact info on file</span>';
+  $('mDrive').href=c.driveUrl||'#';
+  $('mDrive').style.display=c.driveUrl?'':'none';
+  $('mPolCount').textContent=(c.policies||[]).length?`(${c.policies.length})`:'';
+  mTab('overview');
+  $('modalBg').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(){ $('modalBg').classList.remove('open'); document.body.style.overflow=''; }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+function mTab(t){
+  document.querySelectorAll('.mtab').forEach(e=>e.classList.toggle('active',e.dataset.mtab===t));
+  const c=mClient; if(!c) return;
+  if(t==='overview'){
+    $('mBody').innerHTML=`<div class="fgrid">
+      ${fld('Business Name',c.businessName)}${fld('DBA',c.dba)}${fld('Assigned To',c.assignedTo)}${fld('Contact',c.contactName)}
+      ${fld('Phone',c.phone)}${fld('Email',c.email)}${fld('Address',[c.address,c.city,c.state].filter(Boolean).join(', '))}
+      ${fld('Operations',c.operations)}${fld('Files in Drive folder',c.fileCount)}${fld('Last document',c.lastDocDate?fdate(c.lastDocDate):null)}
+      ${fld('Next expiration',c._nextExp?fdate(c._nextExp.toISOString())+' ('+c._d+' days)':null)}
+      ${fld('Premium in force',c._activePrem?fmt$(c._activePrem):null)}${fld('Financing',c.financeStatus)}
+      ${c.feeCheck?fld('Broker fee',typeof c.feeCheck.brokerFee==='number'?fmt$(c.feeCheck.brokerFee)+' ('+(c.feeCheck.confidence||'')+')':'NOT DOCUMENTED'):''}
+      ${c.feeCheck?fld('Retail / wholesale',(c.feeCheck.retailTotal?fmt$(c.feeCheck.retailTotal):'—')+' / '+(c.feeCheck.wholesaleTotal?fmt$(c.feeCheck.wholesaleTotal):'—')):''}
+      ${c.feeCheck?fld('Signed proposal · disclosure',(c.feeCheck.signedProposal?'✓':'✗')+' · '+(c.feeCheck.disclosureOnFile?'✓':'✗')):''}</div>
+      ${c.feeCheck&&c.feeCheck.notes?`<div class="note-box" style="background:#22c55e12;border-color:#22c55e33;color:#86efac">🧾 Fee check: ${esc(c.feeCheck.notes)}</div>`:''}
+      ${c.notes?`<div class="note-box">📝 ${esc(c.notes)}</div>`:''}
+      ${(c.emailFlags||[]).length?`<div class="note-box" style="background:#3b82f612;border-color:#3b82f633;color:#93c5fd">📧 Email findings:<br>${c.emailFlags.map(esc).join('<br>')}</div>`:''}`;
+  } else if(t==='policies'){
+    const pols=c.policies||[];
+    $('mBody').innerHTML=pols.length?pols.map(p=>{
+      const exp=pd(p.expirationDate); const d=days(exp);
+      const scls=p.status==='bound'?(exp&&exp<NOW?'p-expired':'p-bound'):(p.status==='quoted'?'p-quoted':(p.status==='expired'?'p-expired':'p-unknown'));
+      const stxt=p.status==='bound'&&exp&&exp<NOW?'expired':p.status;
+      return `<div class="pol-card"><div class="ph"><b>${esc(p.line||'Policy')}</b>
+        <span class="pill ${scls}">${esc(stxt||'unknown')}</span>
+        ${d!=null&&d>=0&&d<=90&&p.status==='bound'?`<span class="pill p-due">renews in ${d}d</span>`:''}</div>
+       <div class="pol-meta">
+        <span>Carrier<b>${esc(p.carrier||'—')}</b></span>
+        <span>Wholesaler / MGA<b>${esc(p.wholesaler||'—')}</b></span>
+        <span>Policy #<b>${esc(p.policyNumber||'—')}</b></span>
+        <span>Premium<b>${p.premium!=null?fmt$(p.premium):'—'}</b></span>
+        <span>Effective<b>${fdate(p.effectiveDate)}</b></span>
+        <span>Expires<b>${fdate(p.expirationDate)}</b></span>
+       </div>${p.sourceDoc?`<div style="font-size:10.5px;color:var(--text-muted);margin-top:8px">source: ${esc(p.sourceDoc)}</div>`:''}</div>`;
+    }).join(''):'<div class="empty-note">No policy records extracted for this client</div>';
+  } else {
+    $('mBody').innerHTML=`${c.notes?`<div class="note-box" style="margin-top:0">📝 ${esc(c.notes)}</div>`:'<div class="empty-note" style="padding-top:0">No notes captured during extraction.</div>'}
+     <div style="margin-top:16px"><a class="act-btn primary" href="${esc(c.driveUrl)}" target="_blank" rel="noopener">⧉ Open the full document folder in Google Drive</a>
+     <div style="font-size:11.5px;color:var(--text-muted);margin-top:10px">${c.fileCount??'?'} files on file · data extracted from policy documents on ${DATA_AS_OF}</div></div>`;
+  }
+}
+const fld=(l,v)=>`<div class="fld"><label>${l}</label><div class="val ${v==null||v===''?'empty':''}">${v==null||v===''?'Not on file':esc(String(v))}</div></div>`;
+function findClient(name){
+  if(!name) return null;
+  const n=String(name).toLowerCase().replace(/[^a-z0-9 ]/g,'');
+  return CLIENTS.find(c=>((c.businessName||'')+' '+(c.folderName||'')).toLowerCase().includes(n.slice(0,14)))||null;
+}
+
+/* ================= QUOTE BUILDER ================= */
+const Q_LINES = {
+ 'GL': {label:'General Liability', fields:[['aggregate','Aggregate Limit','2,000,000'],['eachOcc','Each Occurrence','1,000,000'],['products','Products / Completed Ops','2,000,000'],['pai','Personal & Adv Injury','1,000,000'],['fireLegal','Fire Legal Liability','100,000'],['medPay','Medical Payments','5,000'],['deductible','Deductible','1,000']]},
+ 'Excess': {label:'Excess Liability', fields:[['xsAgg','Excess Aggregate Limit','1,000,000'],['xsOcc','Excess Each Occurrence','1,000,000']]},
+ 'Property': {label:'Commercial Property', fields:[['building','Building Limit',''],['bpp','Business Personal Property',''],['propDed','Deductible','2,500']]},
+ 'Inland Marine': {label:'Inland Marine / Equipment', fields:[['equip','Equipment Limit',''],['imDed','Deductible','1,000']]},
+ 'WC': {label:'Workers Compensation', fields:[['wcAcc','Each Accident','1,000,000'],['wcDisEmp','Disease – Each Employee','1,000,000'],['wcDisPol','Disease – Policy Limit','1,000,000']]},
+ 'Commercial Auto': {label:'Commercial Auto', fields:[['csl','Combined Single Limit','1,000,000'],['autoDed','Deductible','1,000']]},
+ 'Professional': {label:'Professional Liability', fields:[['plClaim','Each Claim','1,000,000'],['plAgg','Aggregate','1,000,000']]}
+};
+const Q_DISCLOSURES = {
+ 'FL':'This insurance is issued pursuant to the Florida Surplus Lines Law (Fla. Stat. §626.916). Persons insured by surplus lines carriers do not have the protection of the Florida Insurance Guaranty Act to the extent of any right of recovery for the obligation of an insolvent unlicensed insurer. Broker compensation itemized above is fully earned at inception and non-refundable.',
+ 'TX':'Pursuant to Tex. Ins. Code §§4005.003–4005.004, this disclosure itemizes compensation received by the agency for the placement of this insurance. This insurance may be written by a surplus lines insurer not subject to Texas guaranty-fund protection. Broker compensation itemized above is fully earned at inception and non-refundable.',
+ 'PA':'Pursuant to 40 P.S. §310.71 (as amended by Act 62 of 2024), the fees itemized above represent agency compensation for services in connection with this placement, disclosed to and acknowledged by the insured. Surplus lines placements are not protected by the Pennsylvania Property and Casualty Insurance Guaranty Association. Broker compensation is fully earned at inception and non-refundable.',
+ 'CA':'This insurance is placed with a non-admitted insurer and is not subject to protection by the California Insurance Guarantee Association (CIGA). The broker fee itemized above is agency compensation, fully earned at inception, in addition to premium, taxes and carrier fees. (For admitted-carrier placements, the CA Ins. Code §1623 broker-services disclosure applies.)'
+};
+let qSel = ['GL'];
+const qv = id => { const v=($(id)||{}).value||''; const n=parseFloat(String(v).replace(/[^0-9.]/g,'')); return isNaN(n)?null:n; };
+const qs = id => (($(id)||{}).value||'').trim();
+const qMoney = n => n==null?'':'$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const qMoney0 = s => { const n=parseFloat(String(s).replace(/[^0-9.]/g,'')); return isNaN(n)?String(s):'$'+n.toLocaleString('en-US'); };
+
+function qRenderChips(){
+  $('qLineChips').innerHTML = Object.keys(Q_LINES).map(k=>`<button class="q-chip ${qSel.includes(k)?'on':''}" onclick="qToggleLine('${k}')">${k}</button>`).join('');
+  $('qLineCfg').innerHTML = qSel.map(k=>`<div class="q-line-cfg" data-line="${k}">
+    <h4>${Q_LINES[k].label}</h4>
+    <div class="q-grid4">
+      <div class="fld"><label>Carrier</label><input class="q-in q-lf" data-k="carrier" placeholder="Carrier name" oninput="qRender()"></div>
+      <div class="fld"><label>AM Best</label><input class="q-in q-lf" data-k="rating" value="A+ XV" oninput="qRender()"></div>
+      <div class="fld"><label>Policy form</label><select class="filter-select q-lf" data-k="form" style="width:100%" onchange="qRender()"><option>Occurrence</option><option>Claims-Made</option></select></div>
+      ${Q_LINES[k].fields.map(f=>`<div class="fld"><label>${f[1]}</label><input class="q-in q-lf" data-k="${f[0]}" value="${f[2]}" oninput="qRender()"></div>`).join('')}
+    </div></div>`).join('');
+}
+function qToggleLine(k){
+  const saved = qCollectLines();
+  qSel = qSel.includes(k) ? qSel.filter(x=>x!==k) : [...qSel, k];
+  if(!qSel.length) qSel=['GL'];
+  qRenderChips();
+  // restore previously typed values
+  document.querySelectorAll('.q-line-cfg').forEach(cfg=>{
+    const ln=cfg.dataset.line;
+    if(saved[ln]) cfg.querySelectorAll('.q-lf').forEach(inp=>{ if(saved[ln][inp.dataset.k]!=null) inp.value=saved[ln][inp.dataset.k]; });
+  });
+  qRender();
+}
+function qCollectLines(){
+  const out={};
+  document.querySelectorAll('.q-line-cfg').forEach(cfg=>{
+    const o={}; cfg.querySelectorAll('.q-lf').forEach(inp=>o[inp.dataset.k]=inp.value);
+    out[cfg.dataset.line]=o;
+  });
+  return out;
+}
+function qFees(){
+  const w=qv('qWholesale'), r=qv('qRetail');
+  if(w!=null&&r!=null&&r>w){
+    const bf=r-w;
+    // playbook split: headline Broker Fee lowest of the three
+    const f1=Math.floor(bf*0.25*100)/100, f2=Math.floor(bf*0.40*100)/100, f3=Math.round((bf-f1-f2)*100)/100;
+    $('qFee1').value=f1.toFixed(2); $('qFee2').value=f2.toFixed(2); $('qFee3').value=f3.toFixed(2);
+    $('qFeeNote').textContent=`Broker fee total ${qMoney(bf)} = retail ${qMoney(r)} − wholesale ${qMoney(w)} (split per fee playbook, headline lowest)`;
+  } else { $('qFeeNote').textContent = (w!=null&&r!=null&&r<=w)?'⚠ Retail must exceed wholesale for a positive fee':''; }
+}
+function qPickClient(){
+  const i=$('qClientPick').value; if(i==='') return;
+  const c=CLIENTS[+i];
+  $('qName').value=c.businessName||c.folderName||'';
+  $('qDesc').value=c.operations||'';
+  if(c.state&&['FL','TX','PA','CA'].includes(c.state)) $('qState').value=c.state;
+  qRender();
+}
+
+/* ---- MGA quote PDF extraction (pdf.js) ---- */
+let qPdfLib=null;
+function qLoadPdfjs(){
+  if(qPdfLib) return Promise.resolve(qPdfLib);
+  return new Promise((res,rej)=>{
+    const s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    s.onload=()=>{ window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; qPdfLib=window.pdfjsLib; res(qPdfLib); };
+    s.onerror=rej; document.head.appendChild(s);
+  });
+}
+async function qExtractPdf(files){
+  if(!files||!files.length) return;
+  $('qPdfStatus').textContent='Reading quote…';
+  try{
+    const lib=await qLoadPdfjs();
+    let lines=[];
+    for(const file of files){
+      const buf=await file.arrayBuffer();
+      const pdf=await lib.getDocument({data:buf}).promise;
+      for(let p=1;p<=pdf.numPages;p++){
+        const tc=await (await pdf.getPage(p)).getTextContent();
+        // group items into lines by y-position
+        const rows={};
+        tc.items.forEach(it=>{ const y=Math.round(it.transform[5]); (rows[y]=rows[y]||[]).push(it); });
+        Object.keys(rows).sort((a,b)=>b-a).forEach(y=>{
+          lines.push(rows[y].sort((a,b)=>a.transform[4]-b.transform[4]).map(i=>i.str).join(' ').replace(/\s+/g,' ').trim());
+        });
+      }
+    }
+    const text=lines.join('\n');
+    if(text.replace(/\s/g,'').length<50){ $('qPdfStatus').innerHTML='⚠ This PDF appears to be a scanned image — no extractable text. Paste the forms list manually below.'; return; }
+    // endorsement/form schedule: form-number pattern e.g. CG 21 47 12 19, IL0017, ZX-100 (07/19)
+    const formPat=/^[A-Z]{1,4}[A-Z0-9]?\s?-?\s?\d{2,5}(\s?\d{2}\s?\d{2}(\s?\d{2})?|\s?\(\d{2}\/\d{2,4}\))?\b/;
+    const endos=[], excls=[];
+    lines.forEach(l=>{
+      if(l.length<6||l.length>140) return;
+      const isForm=formPat.test(l)&&/[a-zA-Z]{4,}/.test(l.replace(formPat,''));
+      const isExcl=/exclusion|excluded|absolute.*(liability|injury)|limitation of coverage/i.test(l);
+      if(isExcl&&(isForm||/^[-•●\d\s]*[A-Z]/.test(l))) excls.push(l);
+      else if(isForm) endos.push(l);
+    });
+    const uniq=a=>[...new Set(a)];
+    const e1=uniq(endos).slice(0,80), e2=uniq(excls).slice(0,50);
+    if(e1.length) $('qEndos').value=e1.join('\n');
+    if(e2.length) $('qExcls').value=e2.join('\n');
+    // carrier + totals autofill
+    const carMatch=text.match(/(?:insurer|carrier|company)\s*:?\s+([A-Z][A-Za-z&.,' ]{5,60}(?:Insurance|Specialty|Indemnity|Surplus|Casualty)[A-Za-z ]{0,20})/);
+    if(carMatch){ const inp=document.querySelector('.q-line-cfg .q-lf[data-k="carrier"]'); if(inp&&!inp.value) inp.value=carMatch[1].trim(); }
+    const totMatch=text.match(/total\s*(?:premium|cost|due|amount)?[^\n$%]{0,30}\$\s?([\d,]+\.?\d{0,2})/i);
+    if(totMatch&&!qs('qWholesale')){ $('qWholesale').value=totMatch[1]; qFees(); }
+    $('qPdfStatus').innerHTML=`✓ Extracted <b>${e1.length}</b> endorsements/forms and <b>${e2.length}</b> exclusions${carMatch?' · carrier detected':''}${totMatch?' · total detected $'+totMatch[1]:''}. Edit the lists below before generating.`;
+    qRender();
+  }catch(err){ $('qPdfStatus').textContent='⚠ Could not parse the PDF ('+err.message+'). Paste the forms manually.'; }
+}
+
+/* ---- proposal render ---- */
+function qRender(){
+  const name=qs('qName')||'Client Name';
+  const lines=qCollectLines();
+  const sel=qSel;
+  const carriers=sel.map(k=>({k,c:(lines[k]||{}).carrier})).filter(x=>x.c);
+  const carrierTxt=carriers.length?carriers.map(x=>`${x.c} (${x.k==='Excess'?'XS':x.k})`).join(', '):'—';
+  const rating=(lines[sel[0]]||{}).rating||'A+ XV';
+  const forms=[...new Set(sel.map(k=>(lines[k]||{}).form||'Occurrence'))].join(' / ').toUpperCase();
+  const typeTxt=sel.map(k=>k==='Excess'?'XS':k).join(' & ');
+  const d=qs('qDate')?new Date(qs('qDate')+'T12:00:00'):new Date();
+  const dateTxt=d.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  const retail=qv('qRetail'), downPct=qv('qDownPct')||35, nPay=Math.max(1,Math.round(qv('qNumPay')||10)), finPct=qv('qFinPct')||0;
+  const down=retail!=null?retail*downPct/100:null;
+  const monthly=retail!=null?((retail-down)*(1+finPct/100))/nPay:null;
+  // coverage boxes
+  let boxes='', inline='';
+  const B=(l,v,s)=>`<div class="cov-box"><div class="cl">${l}</div><div class="cv">${qMoney0(v||'—')}</div><div class="cs">${s||''}</div></div>`;
+  sel.forEach(k=>{
+    const L=lines[k]||{};
+    if(k==='GL'){ boxes+=B('Aggregate Limit',L.aggregate,'')+B('Each Occurrence',L.eachOcc,'Per Incident')+B('Products / Completed Ops',L.products,'Aggregate Limit')+B('Personal & Advertising Injury',L.pai,'Per Incident');
+      inline=`<div class="cov-inline"><span>Fire Legal Liability <b>${qMoney0(L.fireLegal||'100,000')}</b></span><span>Medical Payments <b>${qMoney0(L.medPay||'5,000')}</b></span><span>Deductible <b>${qMoney0(L.deductible||'1,000')}</b></span></div>`; }
+    else if(k==='Excess') boxes+=B('Excess Liability Aggregate Limit',L.xsAgg,'')+B('Excess Each Occurrence',L.xsOcc,'Per Incident');
+    else if(k==='Property') boxes+=B('Building Limit',L.building,'')+B('Business Personal Property',L.bpp,`Deductible ${qMoney0(L.propDed||'')}`);
+    else if(k==='Inland Marine') boxes+=B('Equipment / Inland Marine',L.equip,`Deductible ${qMoney0(L.imDed||'')}`);
+    else if(k==='WC') boxes+=B('WC Each Accident',L.wcAcc,'')+B('Disease — Each Employee / Policy',(L.wcDisEmp||'1,000,000'),`Policy limit ${qMoney0(L.wcDisPol||'1,000,000')}`);
+    else if(k==='Commercial Auto') boxes+=B('Auto Combined Single Limit',L.csl,`Deductible ${qMoney0(L.autoDed||'')}`);
+    else if(k==='Professional') boxes+=B('Professional — Each Claim',L.plClaim,'')+B('Professional — Aggregate',L.plAgg,'');
+  });
+  const endos=qs('qEndos').split('\n').map(s=>s.trim()).filter(Boolean);
+  const excls=qs('qExcls').split('\n').map(s=>s.trim()).filter(Boolean);
+  const f1=qv('qFee1'),f2=qv('qFee2'),f3=qv('qFee3');
+  const feeTot=(f1||0)+(f2||0)+(f3||0);
+  const st=qs('qState');
+  const page1=`<div class="prop">
+   <div class="prop-head"><h1>ZENIX INSURANCE LLC</h1><div class="ct">mbank@zenixinsurance.com • (310) 810-3520</div></div>
+   <div class="prop-meta"><span><b>Date:</b> ${esc(dateTxt)}</span><span><b>Proposal Type:</b> ${esc(typeTxt)}</span><span><b>Prepared by:</b> ${esc(qs('qPrep')||'Michael Bank')}</span></div>
+   <div class="prop-body">
+    <div class="prop-client">${esc(name)}</div>
+    <div class="prop-carrier">
+      <div class="row"><span class="ppill">CARRIER</span> ${esc(carrierTxt)}</div>
+      <div class="row"><span class="ppill">RATING</span> A.M. Best&nbsp; <b style="color:#1c7d43">${esc(rating.split(' ')[0]||'A+')}</b>&nbsp; <span style="color:#2f6fdb">${esc(rating.split(' ').slice(1).join(' '))}</span></div>
+      <div class="row"><span class="ppill">POLICY FORM</span> ${esc(forms)}</div>
+    </div>
+    <div class="prop-sec">Coverage Summary</div>
+    <div class="cov-grid">${boxes}</div>
+    ${inline}
+    <div class="feat-row"><span class="feat">Additional Insured Certificates</span><span class="feat">Primary Wording</span><span class="feat">Waiver of Subrogation</span></div>
+    <div class="prop-sec">Business Criteria</div>
+    <div class="biz-crit"><div class="bg2">
+      <span><b>Active Owners:</b> ${esc(qs('qOwners')||'1')}</span><span><b>Gross Receipts:</b> ${qMoney0(qs('qReceipts')||'—')}</span>
+      <span><b>Employee Payroll:</b> ${qMoney0(qs('qPayroll')||'0')}</span><span><b>Sub Costs:</b> ${qMoney0(qs('qSubs')||'0')}</span>
+    </div><div style="margin-top:6px"><b>Description:</b> ${esc(qs('qDesc')||'—')}</div></div>
+    <div class="prem-block"><div class="ph2">PREMIUM:</div><div class="prem-rows">
+      <div class="prem-row"><b>Total Premium (Inc. Fees):</b><span class="amt">${retail!=null?qMoney(retail):'$—'}</span></div>
+      <div class="prem-row"><b>Down Payment:</b><span class="amt">${down!=null?qMoney(down):'$—'}</span></div>
+      <div class="prem-row"><b>${nPay} Monthly Payments**:</b><span class="amt">${monthly!=null?qMoney(monthly):'$—'}</span></div>
+    </div><div class="prem-fn">*25% of premium and all fees are fully earned at inception&nbsp; | &nbsp;** includes finance charges</div></div>
+    <div class="prop-disc">This proposal is a summary only and not a legal interpretation of coverage. Down payment is non-refundable once policy is in effect. Policy cost includes all fees except finance charges if not paid in full. I authorize Zenix Insurance LLC to secure the coverages above and sign necessary documents on my behalf. Coverage is subject to underwriting, inspection, audit, and formal acceptance by the carrier.</div>
+    <div class="sig-row"><div class="sl">Applicant's Signature</div><div class="sd">Date</div></div>
+    <div class="prop-eff">Requested Effective Date: ____________&nbsp;&nbsp;&nbsp;Hour: <b>12:01 AM</b></div>
+    <div class="prop-foot">Zenix Insurance LLC&nbsp; | &nbsp;Direct Line: (310) 810-3160&nbsp; | &nbsp;FL License #L122343</div>
+   </div></div>`;
+  let page2='';
+  if(endos.length||excls.length||feeTot>0){
+    page2=`<div class="prop"><div class="prop-head"><h1>ZENIX INSURANCE LLC</h1><div class="ct">${esc(name)} — Schedule of Forms &amp; Broker Compensation Disclosure</div></div><div class="prop-body">
+     ${endos.length?`<div class="prop-sec">Endorsements &amp; Forms (from carrier quote)</div><div class="prop2-list">${endos.map(e=>`<div>${esc(e)}</div>`).join('')}</div>`:''}
+     ${excls.length?`<div class="prop-sec" style="margin-top:14px">Exclusions — read carefully</div><div class="prop2-list">${excls.map(e=>`<div>${esc(e)}</div>`).join('')}</div>`:''}
+     ${feeTot>0?`<div class="prop-sec" style="margin-top:14px">Broker Compensation</div><div class="fee-table">
+       <div class="fr"><span>• Broker Fee (fully earned)</span><span>${qMoney(f1||0)}</span></div>
+       <div class="fr"><span>• Policy Servicing Fee</span><span>${qMoney(f2||0)}</span></div>
+       <div class="fr"><span>• Application Processing / Admin Fee</span><span>${qMoney(f3||0)}</span></div>
+       <div class="fr"><span>Total Broker Compensation (paid at inception)</span><span>${qMoney(feeTot)}</span></div></div>`:''}
+     ${st&&Q_DISCLOSURES[st]?`<div class="disc-txt"><b>${st} Disclosure:</b> ${Q_DISCLOSURES[st]}</div>`:''}
+     <div class="sig-row"><div class="sl">Applicant's Signature</div><div class="sd">Date</div></div>
+     <div class="sig-row" style="margin-top:18px"><div class="sl">Broker Signature — Zenix Insurance LLC</div><div class="sd">Date</div></div>
+     <div class="prop-foot">Zenix Insurance LLC&nbsp; | &nbsp;Direct Line: (310) 810-3160&nbsp; | &nbsp;FL License #L122343</div>
+    </div></div>`;
+  }
+  $('propPrint').innerHTML=page1+page2;
+}
+function qPrint(){ qRender(); window.print(); }
+function qResetForm(){ ['qName','qDesc','qPayroll','qReceipts','qSubs','qWholesale','qRetail','qFee1','qFee2','qFee3','qEndos','qExcls'].forEach(i=>$(i).value=''); $('qOwners').value='1'; $('qDownPct').value='35'; $('qNumPay').value='10'; $('qFinPct').value='6'; $('qClientPick').value=''; qSel=['GL']; qRenderChips(); $('qPdfStatus').textContent='No quote uploaded yet.'; qRender(); }
+function qQuoteObj(){
+  return { businessName:qs('qName'), date:qs('qDate'), preparedBy:qs('qPrep'), state:qs('qState'), operations:qs('qDesc'),
+    exposures:{owners:qs('qOwners'),payroll:qs('qPayroll'),receipts:qs('qReceipts'),subCosts:qs('qSubs')},
+    lines:qCollectLines(), selectedLines:qSel,
+    pricing:{wholesale:qv('qWholesale'),retail:qv('qRetail'),brokerFee:{feeEarned:qv('qFee1'),servicing:qv('qFee2'),admin:qv('qFee3')},downPct:qv('qDownPct'),numPayments:qv('qNumPay'),financePct:qv('qFinPct')},
+    endorsements:qs('qEndos').split('\n').filter(Boolean), exclusions:qs('qExcls').split('\n').filter(Boolean) };
+}
+function qDownloadJson(){
+  const blob=new Blob([JSON.stringify(qQuoteObj(),null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download=(qs('qName')||'quote').replace(/[^a-z0-9]+/gi,'_')+'_quote.json'; a.click();
+}
+function qAddToBook(){
+  const q=qQuoteObj(); if(!q.businessName){ alert('Enter a business name first'); return; }
+  const rec={folderId:null,folderName:q.businessName,driveUrl:null,businessName:q.businessName,dba:null,contactName:null,phone:null,email:null,
+    address:null,city:null,state:q.state||null,operations:q.operations||'new quote',assignedTo:qs('qPrep')==='Michael Bank'?'Michael Bank':'James Bekhor',
+    policies:q.selectedLines.map(k=>({line:k,carrier:(q.lines[k]||{}).carrier||null,wholesaler:null,policyNumber:null,premium:q.pricing.retail,effectiveDate:null,expirationDate:null,status:'quoted',sourceDoc:'quote builder'})),
+    stage:'quoted',fileCount:0,lastDocDate:new Date().toISOString().slice(0,10),notes:'Created in the CRM quote builder',source:'quote', _id:CLIENTS.length};
+  CLIENTS.push(rec);
+  // recompute derived fields for the new record
+  rec._lines=q.selectedLines; rec._carriers=rec.policies.map(p=>p.carrier).filter(Boolean); rec._bucket='quoted'; rec._totPrem=q.pricing.retail||0; rec._activePrem=0; rec._hasActive=false; rec._d=null; rec._nextExp=null;
+  renderPriority(); renderClients(); renderTasks();
+  alert('Added to the book as Quoted (this session). Download the JSON to keep a permanent copy.');
+}
+
+/* ---------- init ---------- */
+let _appInited=false;
+function rerenderAll(){ renderPriority(); renderDashboard(); renderClients(); renderTasks(); if (typeof renderLeads==='function') renderLeads(); if (typeof renderPipeline==='function'){ plDecorate(); renderPipeline(); } if (typeof renderAccounting==='function') renderAccounting(); }
+function renderAccounting(){
+  if(!$('acIpfsTable')) return;
+  const q=($('acSearch').value||'').toLowerCase(), feeF=$('acFee').value;
+  const match=c=>!q || (c.businessName||'').toLowerCase().includes(q);
+  const act = (CLIENTS||[]).filter(c=>c._hasActive);
+  const inforce = act.reduce((s,c)=>s+(c._activePrem||0),0);
+  const feeClients = act.filter(c=>c.feeCheck);
+  const feeOk = feeClients.filter(c=>typeof c.feeCheck.brokerFee==='number'&&c.feeCheck.brokerFee>0);
+  const feeSum = feeOk.reduce((s,c)=>s+c.feeCheck.brokerFee,0);
+  const feeMissing = act.filter(c=>!(c.feeCheck&&typeof c.feeCheck.brokerFee==='number'&&c.feeCheck.brokerFee>0));
+  const fin = (CLIENTS||[]).filter(c=>c.financeStatus);
+  const finRank=c=>/intent to cancel|cancellation warning|warning/i.test(c.financeStatus)&&!/^cancelled/i.test(c.financeStatus)?0:(/cancelled/i.test(c.financeStatus)?1:2);
+  const finRisk = fin.filter(c=>finRank(c)===0).length;
+  $('acKpis').innerHTML=[
+    ['⛔','IPFS cancellation risk',finRisk,finRisk?'k-red':''],
+    ['🏦','On IPFS watchlist',fin.length,''],
+    ['＄','Premium in force',fmt$(inforce),''],
+    ['🧾','Broker fees documented',fmt$(feeSum)+' ('+feeOk.length+')','k-green'],
+    ['⚠','Active w/o fee docs',feeMissing.length,feeMissing.length?'k-amber':''],
+  ].map(k=>`<div class="kpi ${k[3]}"><span class="ic">${k[0]}</span><h4>${k[2]}</h4><p>${k[1]}</p></div>`).join('');
+  const finRows = fin.filter(match).sort((a,b)=>finRank(a)-finRank(b)||(b._activePrem||0)-(a._activePrem||0));
+  $('acIpfsCount').textContent=finRows.length;
+  $('acIpfsTable').innerHTML='<thead><tr><th>Business</th><th>Financing status</th><th>Premium</th><th>Contact</th></tr></thead><tbody>'+
+    (finRows.map(c=>{const r=finRank(c);const cls=r===0?'pr-hot':(r===1?'pr-off':'pr-wait');
+      return `<tr onclick="openModal(${c._id})"><td style="font-weight:600;min-width:170px">${esc(c.businessName)}</td>
+      <td style="max-width:520px"><span class="pr-chip ${cls}" style="margin-right:8px">${r===0?'At risk':(r===1?'Cancelled':'Watch')}</span><span style="font-size:12px;color:var(--text-secondary)">${esc(c.financeStatus)}</span></td>
+      <td class="prem">${c._activePrem?fmt$(c._activePrem):'—'}</td>
+      <td>${c.phone?`<span class="phone">✆ ${esc(c.phone)}</span>`:'—'}</td></tr>`;}).join('')||'<tr><td colspan="4"><div class="empty-note">Nothing on the IPFS watchlist</div></td></tr>')+'</tbody>';
+  let feeRows = act.filter(match);
+  if(feeF==='missing') feeRows=feeRows.filter(c=>feeMissing.includes(c));
+  if(feeF==='ok') feeRows=feeRows.filter(c=>feeOk.includes(c));
+  feeRows.sort((a,b)=>(feeMissing.includes(b)?1:0)-(feeMissing.includes(a)?1:0)||(b._activePrem||0)-(a._activePrem||0));
+  $('acFeeCount').textContent=feeRows.length;
+  $('acFeeTable').innerHTML='<thead><tr><th>Business</th><th>Broker fee</th><th>Retail / wholesale</th><th>Proposal · disclosure</th><th>Premium</th></tr></thead><tbody>'+
+    (feeRows.slice(0,400).map(c=>{const f=c.feeCheck||{};const ok=feeOk.includes(c);
+      return `<tr onclick="openModal(${c._id})"><td style="font-weight:600;min-width:170px">${esc(c.businessName)}</td>
+      <td>${ok?`<span style="color:#86efac;font-weight:700">${fmt$(f.brokerFee)}</span>${f.confidence?` <span style="font-size:10px;color:var(--text-muted)">${esc(f.confidence)}</span>`:''}`:'<span class="pr-chip pr-call">Not documented</span>'}</td>
+      <td style="font-size:12px;color:var(--text-secondary)">${f.retailTotal?fmt$(f.retailTotal):'—'} / ${f.wholesaleTotal?fmt$(f.wholesaleTotal):'—'}</td>
+      <td style="font-size:12px">${f.signedProposal?'<span style="color:#86efac">✓ proposal</span>':'<span style="color:#fca5a5">✗ proposal</span>'} · ${f.disclosureOnFile?'<span style="color:#86efac">✓ disclosure</span>':'<span style="color:#fca5a5">✗ disclosure</span>'}</td>
+      <td class="prem">${c._activePrem?fmt$(c._activePrem):'—'}</td></tr>`;}).join('')||'<tr><td colspan="5"><div class="empty-note">No matching accounts</div></td></tr>')+'</tbody>';
+}
+function initApp(){
+  if(_appInited){ rerenderAll(); return; }
+  _appInited=true;
+  if(SIDECAR.ipfsAlert){
+    const b=`<div style="background:#ef44441a;border:1px solid #ef444455;border-radius:12px;padding:12px 16px;margin-bottom:16px;font-size:12.5px;color:#fca5a5;display:flex;gap:10px;align-items:flex-start"><span style="font-size:15px">⛔</span><div><b style="color:#fecaca">IPFS renewal block active</b> — ${esc(SIDECAR.ipfsAlert)}</div></div>`;
+    $('pvAlert').innerHTML=b; $('dashAlert').innerHTML=b;
+  }
+  const lines=[...new Set(CLIENTS.flatMap(c=>c._lines))].sort();
+  const carriers=[...new Set(CLIENTS.flatMap(c=>c._carriers))].sort();
+  const states=[...new Set(CLIENTS.map(c=>c.state).filter(Boolean))].sort();
+  lines.forEach(l=>$('pvLine').insertAdjacentHTML('beforeend',`<option>${esc(l)}</option>`));
+  carriers.forEach(l=>$('pvCarrier').insertAdjacentHTML('beforeend',`<option>${esc(l)}</option>`));
+  states.forEach(l=>$('pvState').insertAdjacentHTML('beforeend',`<option>${esc(l)}</option>`));
+  renderPriority(); renderDashboard(); renderClients(); renderTasks();
+  // quote builder init
+  const today=new Date(); $('qDate').value=today.toISOString().slice(0,10);
+  CLIENTS.map((c,i)=>({i,n:c.businessName||c.folderName})).sort((a,b)=>(a.n||'').localeCompare(b.n||'')).forEach(x=>{
+    if(x.n) $('qClientPick').insertAdjacentHTML('beforeend',`<option value="${x.i}">${esc(x.n)}</option>`);
+  });
+  qRenderChips(); qRender();
+}
+
+
+/* ================= Supabase live glue ================= */
+let authMode='signin';
+function toggleAuthMode(e){ if(e)e.preventDefault(); authMode=authMode==='signin'?'signup':'signin';
+  $('authBtn').textContent=authMode==='signin'?'Sign in':'Create account';
+  $('authToggle').textContent=authMode==='signin'?'Create your account':'Back to sign in';
+  $('authMsg').textContent=authMode==='signin'?'Sign in with your agency account':'Create your account with your agency email'; }
+function authNote(msg, ok){ $('authErr').style.color=ok?'#86efac':'#fca5a5'; $('authErr').textContent=msg; }
+
+async function doAuth(){
+  const email=$('authEmail').value.trim(), password=$('authPass').value;
+  if(!email||!password){ authNote('Enter email and password'); return; }
+  authNote('...');
+  if(authMode==='signup'){
+    const {data,error}=await sb.auth.signUp({email,password});
+    if(error){ authNote(error.message); return; }
+    if(!data.session){ authNote('Account created — check your email to confirm, then sign in. Access also requires James to authorize your email.', true); toggleAuthMode(); return; }
+  } else {
+    const {error}=await sb.auth.signInWithPassword({email,password});
+    if(error){ authNote(error.message); return; }
+  }
+  enterApp();
+}
+async function doSignOut(e){ if(e)e.preventDefault(); await sb.auth.signOut(); location.reload(); }
+
+async function loadData(){
+  const [cl, rc, vb, meta] = await Promise.all([
+    sb.from('clients').select('id,data').order('business_name'),
+    sb.from('receivables').select('id,data'),
+    sb.from('vendor_bills').select('id,data'),
+    sb.from('app_meta').select('key,value')
+  ]);
+  const err = cl.error||rc.error||vb.error||meta.error;
+  if(err) return {status:'error', message:err.message};
+  if(!cl.data.length){
+    const {data:allowed}=await sb.rpc('is_allowed');
+    if(!allowed) return {status:'unauthorized'};
+  }
+  CLIENTS = cl.data.map(r=>({ ...r.data, _rowId:r.id }));
+  SIDECAR = Object.fromEntries((meta.data||[]).map(m=>[m.key,m.value]));
+  SIDECAR.receivables = (rc.data||[]).map(r=>({ ...r.data, _rowId:r.id }));
+  SIDECAR.vendorBills = (vb.data||[]).map(r=>({ ...r.data, _rowId:r.id }));
+  DATA_AS_OF = SIDECAR.dataAsOf || '—';
+  return {status:'ok'};
+}
+
+async function enterApp(){
+  authNote('Loading your book...', true);
+  const {data:{user}} = await sb.auth.getUser();
+  const r = await loadData();
+  if(r.status==='error'){ authNote('Could not load data: '+r.message); return; }
+  if(r.status==='unauthorized'){
+    $('authForm').style.display='none';
+    authNote('Signed in as '+(user?user.email:'?')+', but this account is not authorized yet. Ask James to add you, then reload. ', false);
+    $('authErr').insertAdjacentHTML('beforeend','<a href="#" onclick="doSignOut(event)" style="color:var(--cyan)">Sign out</a>');
+    return;
+  }
+  const em=(user&&user.email)||'—';
+  $('navUser').textContent=em; $('navAvatar').textContent=initials(em.split('@')[0].replace(/[._]/g,' '));
+  $('authWrap').style.display='none';
+  await loadLeads();
+  decorate(); initApp(); renderLeads(); qqInit();
+  if(typeof plDecorate==='function'){ plDecorate(); renderPipeline(); ixInit(); loadMarkets(); }
+}
+
+async function saveClient(c){
+  const clean={}; for(const k of Object.keys(c)) if(!k.startsWith('_')) clean[k]=c[k];
+  const {error}=await sb.from('clients').update({data:clean}).eq('id', c._rowId);
+  return error;
+}
+
+/* ---------- in-modal editing ---------- */
+const EDIT_FIELDS=[['businessName','Business Name'],['dba','DBA'],['contactName','Contact'],['phone','Phone'],
+  ['email','Email'],['address','Address'],['city','City'],['state','State'],['operations','Operations'],
+  ['stage','Stage'],['financeStatus','Financing']];
+function eIn(k,label,v){ return `<div><div style="font-size:10px;letter-spacing:.5px;text-transform:uppercase;color:var(--text-muted);margin-bottom:3px">${label}</div>
+  <input class="filter-input" style="width:100%;box-sizing:border-box" id="ef_${k}" value="${esc(v==null?'':v)}"></div>`; }
+function mEdit(){
+  document.querySelectorAll('.mtab').forEach(e=>e.classList.toggle('active',e.dataset.mtab==='edit'));
+  const c=mClient; if(!c) return;
+  const agentOpts=['', ...AGENTS].map(a=>`<option value="${esc(a)}" ${(c.assignedTo||'')===a?'selected':''}>${a||'Unassigned'}</option>`).join('');
+  $('mBody').innerHTML=`<div class="fgrid">${EDIT_FIELDS.map(([k,l])=>eIn(k,l,c[k])).join('')}
+    <div><div style="font-size:10px;letter-spacing:.5px;text-transform:uppercase;color:var(--text-muted);margin-bottom:3px">Assigned To</div>
+      <select class="filter-select" style="width:100%" id="ef_assignedTo">${agentOpts}</select></div></div>
+    <div style="margin-top:12px"><div style="font-size:10px;letter-spacing:.5px;text-transform:uppercase;color:var(--text-muted);margin-bottom:3px">Notes</div>
+      <textarea class="filter-input" style="width:100%;min-height:90px;box-sizing:border-box;font-family:inherit" id="ef_notes">${esc(c.notes||'')}</textarea></div>
+    <div style="display:flex;gap:10px;align-items:center;margin-top:14px">
+      <button class="act-btn primary" style="padding:9px 22px" onclick="mSaveEdit()">Save changes</button>
+      <button class="act-btn" style="padding:9px 16px" onclick="mTab('overview')">Cancel</button>
+      <span id="editStatus" style="font-size:11.5px;color:var(--text-muted)"></span></div>
+    <div style="font-size:10.5px;color:var(--text-muted);margin-top:10px">Changes save to the shared database and are visible to everyone immediately. Policies are edited via the data files for now.</div>`;
+}
+async function mSaveEdit(){
+  const c=mClient; if(!c) return;
+  $('editStatus').textContent='Saving...';
+  for(const [k] of EDIT_FIELDS){ const v=$('ef_'+k).value.trim(); c[k]=v===''?null:v; }
+  const at=$('ef_assignedTo').value; c.assignedTo=at===''?null:at;
+  const nv=$('ef_notes').value.trim(); c.notes=nv===''?null:nv;
+  const error=await saveClient(c);
+  if(error){ $('editStatus').style.color='#fca5a5'; $('editStatus').textContent='Save failed: '+error.message; return; }
+  decorate(); rerenderAll();
+  openModal(c._id);
+}
+
+/* persistent quote-builder add */
+async function qAddToBook(){
+  const q=qQuoteObj(); if(!q.businessName){ alert('Enter a business name first'); return; }
+  const rec={folderId:null,folderName:q.businessName,driveUrl:null,businessName:q.businessName,dba:null,contactName:null,phone:null,email:null,
+    address:null,city:null,state:q.state||null,operations:q.operations||'new quote',assignedTo:qs('qPrep')==='Michael Bank'?'Michael Bank':'James Bekhor',
+    policies:q.selectedLines.map(k=>({line:k,carrier:(q.lines[k]||{}).carrier||null,wholesaler:null,policyNumber:null,premium:q.pricing.retail,effectiveDate:null,expirationDate:null,status:'quoted',sourceDoc:'quote builder'})),
+    stage:'quoted',fileCount:0,lastDocDate:new Date().toISOString().slice(0,10),notes:'Created in the CRM quote builder',source:'quote'};
+  const {data,error}=await sb.from('clients').insert({data:rec}).select('id').single();
+  if(error){ alert('Could not save: '+error.message); return; }
+  rec._rowId=data.id; CLIENTS.push(rec);
+  decorate(); rerenderAll();
+  $('qClientPick').insertAdjacentHTML('beforeend',`<option value="${CLIENTS.length-1}">${esc(rec.businessName)}</option>`);
+  alert('Saved to the shared book as Quoted.');
+}
+
+/* boot */
+(async function boot(){
+  const {data:{session}} = await sb.auth.getSession();
+  if(session) enterApp();
+})();
+
+/* ================= Leads tab ================= */
+let LEADS = [];
+let LEAD_STATUS = {};
+let LEAD_ACT = {};          // lead_key -> [{ts, kind}] newest first
+let LD_ACT_REMOTE = true;   // falls back to localStorage if the table is missing
+let REFUND_PHONES = new Set();
+const LD_KINDS = { no_answer:['No answer','☎'], voicemail:['Left voicemail','🎙'], connected:['Connected','✓'], bad_number:['Bad number','✕'], note:['Note','✎'] };
+function agoTxt(iso){ if(!iso) return ''; const m=(Date.now()-new Date(iso).getTime())/60000;
+  if(m<1) return 'just now'; if(m<60) return Math.round(m)+'m ago'; if(m<1440) return Math.round(m/60)+'h ago'; return Math.round(m/1440)+'d ago'; }
+function ldActLocalSave(){ try{ localStorage.setItem('zenix_lead_activity', JSON.stringify(LEAD_ACT)); }catch(e){} }
+async function logAttempt(key, kind){
+  const rec = { ts: new Date().toISOString(), kind };
+  (LEAD_ACT[key] = LEAD_ACT[key] || []).unshift(rec);
+  ldActLocalSave();
+  if((LEAD_STATUS[key]||'new')==='new' && kind!=='note') LEAD_STATUS[key]='called';
+  if(kind==='bad_number') LEAD_STATUS[key]='dead';
+  renderLeads();
+  if(typeof ldRefreshCard==='function') ldRefreshCard(key);
+  try{
+    if(LD_ACT_REMOTE){
+      let email=''; try{ email=(await sb.auth.getUser()).data.user.email||''; }catch(e){}
+      await sb.from('lead_activity').insert({ lead_key:key, kind, user_email:email });
+    }
+    await sb.from('lead_status').upsert({ lead_key:key, status:LEAD_STATUS[key]||'called' });
+  }catch(e){}
+}
+function leadKey(d){ return (d.phone_number||'') + '|' + (d.sent_timestamp_edt||''); }
+async function loadLeads(){
+  try{
+    const [lu, st, act] = await Promise.all([
+      sb.from('leads_unique').select('id,data'),
+      sb.from('lead_status').select('lead_key,status'),
+      sb.from('lead_activity').select('lead_key,ts,kind').order('ts',{ascending:false}).limit(8000)
+    ]);
+    if(act.error){ LD_ACT_REMOTE=false; try{ LEAD_ACT=JSON.parse(localStorage.getItem('zenix_lead_activity')||'{}'); }catch(e){ LEAD_ACT={}; } }
+    else { LEAD_ACT={}; (act.data||[]).forEach(r=>{ (LEAD_ACT[r.lead_key]=LEAD_ACT[r.lead_key]||[]).push({ts:r.ts,kind:r.kind}); }); }
+    const rows = lu.data || [];
+    LEADS = rows.filter(x=>x.data && x.data._type==='lead');
+    REFUND_PHONES = new Set(rows.filter(x=>x.data && x.data._type==='refund').map(x=>x.data.phone_number||''));
+    LEAD_STATUS = {};
+    (st.data||[]).forEach(r=>{ LEAD_STATUS[r.lead_key]=r.status; });
+    LEADS.sort((a,b)=> String(b.data.sent_timestamp_edt||'').localeCompare(String(a.data.sent_timestamp_edt||'')));
+  }catch(e){ LEADS = []; }
+}
+/* ---- automatic lead→client conversion matching (the "bot") ---- */
+const _norm = s => String(s||'').toLowerCase().replace(/[^a-z0-9]/g,'');
+let _CLIENT_IDX = null;
+function clientIndex(){
+  if(_CLIENT_IDX) return _CLIENT_IDX;
+  const byName = new Map(), byPhone = new Map();
+  (CLIENTS||[]).forEach(c=>{
+    const n=_norm(c.businessName); if(n.length>4) byName.set(n,c);
+    const p=String(c.phone||'').replace(/[^0-9]/g,''); if(p.length>=10) byPhone.set(p.slice(-10),c);
+  });
+  _CLIENT_IDX = {byName, byPhone}; return _CLIENT_IDX;
+}
+function leadMatch(d){
+  const idx=clientIndex();
+  const n=_norm(d.legal_entity); const p=String(d.phone_number||'').replace(/[^0-9]/g,'').slice(-10);
+  let c = (n.length>4 && idx.byName.get(n)) || (p.length===10 && idx.byPhone.get(p)) || null;
+  if(!c) return {converted:false, bound:false};
+  const bound = c.stage==='bound' || (c._bucket && ['active','due30','due60','due90'].includes(c._bucket));
+  return {converted:true, bound:!!bound, client:c};
+}
+let _ldFiltersDone = false;
+function ldPriority(l){
+  const d=l.data, key=leadKey(d), st=LEAD_STATUS[key]||'new';
+  const mm=leadMatch(d), refd=REFUND_PHONES.has(d.phone_number||'');
+  const acts=LEAD_ACT[key]||[]; const last=acts[0]; const tries=acts.filter(a=>a.kind!=='note').length;
+  const ageH=(Date.now()-new Date(d.sent_timestamp_edt||d._report_date||0).getTime())/36e5;
+  if(mm.bound)                return {p:7,label:'✓ Bound',cls:'pr-done'};
+  if(st==='won')              return {p:7,label:'✓ Won',cls:'pr-done'};
+  if(refd)                    return {p:8,label:'Refunded',cls:'pr-off'};
+  if(st==='dead')             return {p:9,label:'Dead',cls:'pr-off'};
+  if(mm.converted)            return {p:6,label:'In book',cls:'pr-book'};
+  if(st==='quoted')           return {p:5,label:'Awaiting decision',cls:'pr-wait'};
+  if(st==='new' && ageH<=24)  return {p:0,label:'Hot — call now',cls:'pr-hot'};
+  if(st==='new')              return {p:1,label:'Call today',cls:'pr-call'};
+  const lastH = last? (Date.now()-new Date(last.ts).getTime())/36e5 : 999;
+  if(tries>=4)                return {p:4,label:'Long shot · '+tries+' tries',cls:'pr-cold'};
+  if(lastH>=4)                return {p:2,label:'Follow up',cls:'pr-follow'};
+  return {p:3,label:'Tried '+agoTxt(last&&last.ts),cls:'pr-recent'};
+}
+function renderLeads(){
+  if(!$('leadsTable')) return;
+  _CLIENT_IDX = null; // rebuild against latest book
+  if(!_ldFiltersDone && LEADS.length){
+    _ldFiltersDone = true;
+    [...new Set(LEADS.map(l=>String(l.data.sent_timestamp_edt||'').slice(0,7)).filter(Boolean))].sort().reverse()
+      .forEach(m=>$('ldMonth').insertAdjacentHTML('beforeend',`<option>${m}</option>`));
+    [...new Set(LEADS.map(l=>l.data.state).filter(Boolean))].sort()
+      .forEach(st=>$('ldState').insertAdjacentHTML('beforeend',`<option>${st}</option>`));
+  }
+  const q=($('ldSearch').value||'').toLowerCase(), mo=$('ldMonth').value, st=$('ldState').value, stat=$('ldStatus').value;
+  const sort=($('ldSort')&&$('ldSort').value)||'priority';
+  let rows = LEADS.filter(l=>{ const d=l.data;
+    if(q && !(((d.legal_entity||'')+' '+(d.phone_number||'')).toLowerCase().includes(q))) return false;
+    if(mo && String(d.sent_timestamp_edt||'').slice(0,7)!==mo) return false;
+    if(st && d.state!==st) return false;
+    if(stat && (LEAD_STATUS[leadKey(l.data)]||'new')!==stat) return false;
+    return true; });
+  const pr = new Map(rows.map(l=>[l,ldPriority(l)]));
+  if(sort==='priority') rows.sort((a,b)=> pr.get(a).p-pr.get(b).p || String(b.data.sent_timestamp_edt||'').localeCompare(String(a.data.sent_timestamp_edt||'')));
+  else if(sort==='cost') rows.sort((a,b)=> (Number(b.data.purchase_amount)||0)-(Number(a.data.purchase_amount)||0));
+  else rows.sort((a,b)=> String(b.data.sent_timestamp_edt||'').localeCompare(String(a.data.sent_timestamp_edt||'')));
+  const nowMo = new Date().toISOString().slice(0,7);
+  const inMo = l=>String(l.data.sent_timestamp_edt||'').slice(0,7)===nowMo;
+  const sum = a=>a.reduce((x,l)=>x+(Number(l.data.purchase_amount)||0),0);
+  const allPr = LEADS.map(l=>ldPriority(l));
+  const workNow = allPr.filter(x=>x.p<=2).length;
+  const bound = LEADS.filter(l=>leadMatch(l.data).bound).length;
+  const totalSpend = sum(LEADS);
+  const convRate = LEADS.length? Math.round(bound/LEADS.length*100):0;
+  $('ldKpis').innerHTML = [
+    ['☎','Need action now', workNow, 'k-red'],
+    ['◎','Leads this month', LEADS.filter(inMo).length,''],
+    ['＄','Spend this month', fmt$(sum(LEADS.filter(inMo))),''],
+    ['∑','All-time leads', LEADS.length,''],
+    ['✅','Bound from leads', bound+' ('+convRate+'%)','k-green'],
+    ['🎯','Cost per bound acct', bound?fmt$(totalSpend/bound):'—','']
+  ].map(k=>`<div class="kpi ${k[3]}"><span class="ic">${k[0]}</span><h4>${k[2]}</h4><p>${k[1]}</p></div>`).join('');
+  $('leadsTable').innerHTML = '<thead><tr><th>Priority</th><th>Business</th><th>Phone</th><th>Attempts</th><th>Log this call</th><th>Cost</th><th>Status</th><th></th></tr></thead><tbody>'+
+   (rows.map(l=>{ const d=l.data; const ph=d.phone_number||''; const tel=ph.replace(/[^0-9]/g,''); const key=leadKey(d); const P=pr.get(l);
+    const acts=(LEAD_ACT[key]||[]); const tries=acts.filter(a=>a.kind!=='note').length; const last=acts[0];
+    const dots = tries? Array.from({length:Math.min(tries,5)},()=>'<span class="try-dot on"></span>').join('')+(tries>5?'<span class="try-more">+'+(tries-5)+'</span>':'') : '<span class="try-none">no attempts</span>';
+    const cls = String(d.business_class||'').replace(/^[0-9]+\s*-\s*/,'');
+    const sub = [cls.slice(0,44), d.state, agoTxt(d.sent_timestamp_edt? new Date(d.sent_timestamp_edt.replace(' ','T')).toISOString():null)||String(d.sent_timestamp_edt||'').slice(0,10)].filter(Boolean).join(' · ');
+    return `<tr class="ld-row" data-key="${esc(key)}" title="Open lead">
+     <td><span class="pr-chip ${P.cls}">${P.label}</span></td>
+     <td style="max-width:250px"><b style="font-size:13.2px;font-weight:600;display:block">${esc(d.legal_entity||'—')}</b><span style="font-size:11px;color:var(--text-muted)">${esc(sub)}</span></td>
+     <td>${ph?`<a class="act-btn primary" style="padding:4px 10px" href="tel:+1${tel}">✆ ${esc(ph)}</a>`:'—'}</td>
+     <td><div class="try-wrap">${dots}${last?`<span class="try-last">${agoTxt(last.ts)}</span>`:''}</div></td>
+     <td><div class="log-btns">
+       <button class="log-btn" title="No answer" onclick="logAttempt('${esc(key)}','no_answer')">No ans</button>
+       <button class="log-btn" title="Left voicemail" onclick="logAttempt('${esc(key)}','voicemail')">VM</button>
+       <button class="log-btn ok" title="Connected — talked to them" onclick="logAttempt('${esc(key)}','connected')">Talked</button>
+     </div></td>
+     <td style="font-weight:600">${d.purchase_amount!=null?'$'+d.purchase_amount:'—'}</td>
+     <td><select class="filter-select" style="padding:4px 8px;font-size:11px" onchange="setLeadStatus('${esc(key)}',this.value)">${['new','called','quoted','won','dead'].map(x=>`<option ${((LEAD_STATUS[key]||'new')===x)?'selected':''}>${x}</option>`).join('')}</select></td>
+     <td><button class="act-btn" style="color:#4ade80;white-space:nowrap" onclick="ixStartFromLeadKey('${esc(key)}')">▶ Intake</button></td></tr>`; }).join('')||'<tr><td colspan="8"><div class="empty-note">No leads match</div></td></tr>')+'</tbody>';
+  $('ldFoot').textContent = `● ${rows.length} shown of ${LEADS.length} unique leads · syncs automatically from BoldPenguin daily reports`;
+}
+async function setLeadStatus(key, v){
+  LEAD_STATUS[key] = v;
+  try{ await sb.from('lead_status').upsert({ lead_key:key, status:v }); }catch(e){}
+  renderLeads();
+}
+
+/* ================= Quick Quote ================= */
+const QQ_LINES = ['GL','WC','Commercial Auto','Property','Excess','Professional'];
+let qqSel = ['GL'];
+function qqInit(){
+  if(!$('qqChips')) return;
+  $('qqChips').innerHTML = QQ_LINES.map(k=>`<button class="q-chip ${qqSel.includes(k)?'on':''}" onclick="qqToggle('${k}')">${(Q_LINES[k]&&Q_LINES[k].label)||k}</button>`).join('');
+  const dl = $('qqNames');
+  if(dl && !dl.childElementCount){
+    LEADS.slice(0,200).forEach(l=>{ if(l.data.legal_entity) dl.insertAdjacentHTML('beforeend',`<option value="${esc(l.data.legal_entity)}">`); });
+    CLIENTS.forEach(c=>{ if(c.businessName) dl.insertAdjacentHTML('beforeend',`<option value="${esc(c.businessName)}">`); });
+  }
+  qqTotals();
+}
+function qqToggle(k){ qqSel = qqSel.includes(k)?qqSel.filter(x=>x!==k):[...qqSel,k]; if(!qqSel.length) qqSel=['GL']; qqInit(); }
+function qqGuessLines(cov){
+  const c = String(cov||''); const out = [];
+  if(/general liability/i.test(c)) out.push('GL');
+  if(/workers/i.test(c)) out.push('WC');
+  if(/auto/i.test(c)) out.push('Commercial Auto');
+  if(/property/i.test(c)) out.push('Property');
+  if(/professional|e&o/i.test(c)) out.push('Professional');
+  return out.length?out:['GL'];
+}
+function qqMatch(){
+  const n = qs('qqName').toLowerCase();
+  if(!n){ $('qqPicked').textContent=''; return; }
+  const l = LEADS.find(x=>(x.data.legal_entity||'').toLowerCase()===n);
+  const c = CLIENTS.find(x=>(x.businessName||'').toLowerCase()===n);
+  if(l){
+    const d = l.data;
+    if(d.state) $('qqState').value = d.state;
+    $('qqDesc').value = String(d.business_class||'').replace(/^[0-9]+\s*-\s*/,'');
+    qqSel = qqGuessLines(d.coverage_type); qqInit();
+    $('qqPicked').textContent = '✓ Matched BoldPenguin lead — state, operations & coverage pre-filled';
+  } else if(c){
+    if(c.state) $('qqState').value = c.state;
+    $('qqDesc').value = c.operations||'';
+    $('qqPicked').textContent = '✓ Matched existing client — state & operations pre-filled';
+  } else $('qqPicked').textContent = '';
+}
+function qqTotals(){
+  const w = qv('qqWholesale'), f = qv('qqFee')||0;
+  if($('qqTotal')) $('qqTotal').innerHTML = (w==null)?'':`Client pays <b style="color:var(--text-primary)">${qMoney(w+f)}</b> total — about ${qMoney((w+f)*0.35)} down + 9 monthly payments of ~${qMoney(((w+f)*0.65*1.06)/9)}`;
+}
+function qqFromLeadKey(key){
+  const l = LEADS.find(x=>leadKey(x.data)===key); if(!l) return;
+  go('qq');
+  $('qqName').value = l.data.legal_entity||'';
+  qqMatch();
+  window.scrollTo(0,0);
+}
+function qqBuild(){
+  const name = qs('qqName'); const w = qv('qqWholesale'); const f = qv('qqFee')||0;
+  if(!name){ $('qqErr').textContent='Type the business name first.'; return; }
+  if(w==null){ $('qqErr').textContent='Enter the wholesale premium — the number the carrier quoted you.'; return; }
+  $('qqErr').textContent='';
+  $('qName').value = name;
+  $('qState').value = $('qqState').value;
+  $('qDesc').value = qs('qqDesc');
+  $('qWholesale').value = w;
+  $('qFee1').value = f;
+  $('qRetail').value = (w + f);
+  qSel = qqSel.slice();
+  qRenderChips(); qFees(); qRender();
+  go('quote');
+  window.scrollTo(0,0);
+}
+
+/* ================= LIFECYCLE + PIPELINE + SMART INTAKE (interconnected) ================= */
+/* Relies on CRM globals: $, esc, fmt$, fdate, CLIENTS, sb, AGENTS, avColor, initials, openModal, go, saveClient, decorate, LEADS, leadKey */
+
+const LIFE = [
+  {k:'intake',  label:'Intake',   icon:'📥'},
+  {k:'quote',   label:'Quote',    icon:'📤'},
+  {k:'signup',  label:'Sign-up',  icon:'✍️'},
+  {k:'service', label:'Service',  icon:'🛡️'},
+  {k:'renewal', label:'Renewal',  icon:'🔄'}
+];
+const LIFE_ORDER = LIFE.map(l=>l.k);
+const LIFE_BY = Object.fromEntries(LIFE.map(l=>[l.k,l]));
+const ixNum = v => { const n=parseFloat(String(v==null?'':v).replace(/[^0-9.\-]/g,'')); return isNaN(n)?null:n; };
+const ixMoney = n => n==null||isNaN(n)?'—':'$'+Number(n).toLocaleString('en-US',{maximumFractionDigits:0});
+const ixMoney2 = n => '$'+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+function deriveLife(c){
+  if(c.lifeStage) return c.lifeStage;
+  if(c._bucket==='quoted') return 'quote';
+  if(c._bucket==='lapsed') return 'lost';
+  if(c._hasActive && c._d!=null && c._d<=90) return 'renewal';
+  if(c._hasActive) return 'service';
+  if(c._bucket==='review') return 'service';
+  return 'intake';
+}
+function plDecorate(){ (CLIENTS||[]).forEach(c=>{ c._life = c.lifeStage || deriveLife(c); }); }
+
+async function setLife(id, stage){
+  const c=CLIENTS[id]; if(!c) return;
+  c.lifeStage=stage; c._life=stage;
+  renderPipeline();
+  try{ await saveClient(c); }catch(e){}
+}
+function plMove(id,dir){
+  const c=CLIENTS[id]; if(!c) return;
+  const i=LIFE_ORDER.indexOf(c._life);
+  const ni=Math.max(0,Math.min(LIFE_ORDER.length-1,i+dir));
+  if(ni!==i) setLife(id, LIFE_ORDER[ni]);
+}
+/* drag & drop */
+function plDrag(e,id){ e.dataTransfer.setData('text/plain',String(id)); e.dataTransfer.effectAllowed='move'; e.currentTarget.classList.add('dragging'); }
+function plOver(e){ e.preventDefault(); e.currentTarget.classList.add('drop'); }
+function plLeave(e){ e.currentTarget.classList.remove('drop'); }
+function plDrop(e,stage){ e.preventDefault(); e.currentTarget.classList.remove('drop'); const id=parseInt(e.dataTransfer.getData('text/plain'),10); if(!isNaN(id)) setLife(id,stage); }
+
+function plCard(c){
+  const prem=c._hasActive?c._activePrem:c._totPrem;
+  const i=LIFE_ORDER.indexOf(c._life);
+  const ren=(c._d!=null&&c._d<=120)?`<span class="pill p-due" style="font-size:9px">${c._d}d</span>`:'';
+  const lines=(c._lines||[]).slice(0,3).map(l=>`<span class="pill line" style="font-size:9px">${esc(l)}</span>`).join('');
+  return `<div class="pl-card" draggable="true" ondragstart="plDrag(event,${c._id})" ondragend="this.classList.remove('dragging')" onclick="openModal(${c._id})">
+    <div class="nm">${esc(c.businessName||c.folderName||'—')}</div>
+    <div class="meta">${lines} ${prem?`<span class="prem">${fmt$(prem)}</span>`:''} ${ren}</div>
+    <div class="meta" style="margin-top:4px">${c.assignedTo?esc(c.assignedTo):'<span style="opacity:.55">Unassigned</span>'}</div>
+    <div class="pl-move">
+      <button title="Move back" onclick="event.stopPropagation();plMove(${c._id},-1)" ${i<=0?'disabled':''}>◀</button>
+      <button title="Move forward" onclick="event.stopPropagation();plMove(${c._id},1)" ${i>=LIFE_ORDER.length-1?'disabled':''}>▶</button>
+    </div></div>`;
+}
+function renderPipeline(){
+  if(!$('plBoard')) return;
+  plDecorate();
+  const q=($('plSearch')?$('plSearch').value:'').toLowerCase();
+  const ag=$('plAgent')?$('plAgent').value:'';
+  const cols={}; LIFE_ORDER.forEach(k=>cols[k]=[]);
+  let lost=0;
+  (CLIENTS||[]).forEach(c=>{
+    if(c._life==='lost'){ lost++; return; }
+    if(q && !((c.businessName||'')+' '+(c.operations||'')+' '+(c.folderName||'')+' '+(c._carriers||[]).join(' ')).toLowerCase().includes(q)) return;
+    if(ag==='__none' && c.assignedTo) return;
+    if(ag && ag!=='__none' && c.assignedTo!==ag) return;
+    (cols[c._life]||cols.intake).push(c);
+  });
+  // sort each column: renewal by soonest, others by premium desc
+  LIFE_ORDER.forEach(k=>{
+    if(k==='renewal') cols[k].sort((a,b)=>(a._d??9e9)-(b._d??9e9));
+    else cols[k].sort((a,b)=>((b._hasActive?b._activePrem:b._totPrem)||0)-((a._hasActive?a._activePrem:a._totPrem)||0));
+  });
+  const openVal=[...cols.intake,...cols.quote,...cols.signup].reduce((s,c)=>s+((c._hasActive?c._activePrem:c._totPrem)||0),0);
+  const kpis=[
+    {ic:'💰',n:fmt$(openVal),t:'Open pipeline value'},
+    ...LIFE.map(l=>({ic:l.icon,n:cols[l.k].length,t:l.label}))
+  ];
+  $('plKpis').innerHTML=kpis.map(k=>`<div class="kpi"><span class="ic">${k.ic}</span><h4>${k.n}</h4><p>${k.t}</p></div>`).join('');
+  $('plBoard').innerHTML=LIFE.map(l=>{
+    const rows=cols[l.k];
+    return `<div class="pl-col" ondragover="plOver(event)" ondragleave="plLeave(event)" ondrop="plDrop(event,'${l.k}')">
+      <div class="pl-colhead">${l.icon} ${l.label}<span class="cnt">${rows.length}</span></div>
+      ${rows.map(plCard).join('')||'<div class="empty-note" style="font-size:11px;padding:14px 4px">Drop a deal here</div>'}
+    </div>`;
+  }).join('');
+  const total=LIFE_ORDER.reduce((s,k)=>s+cols[k].length,0);
+  $('plFoot').textContent=`${total} active deals on the board · ${lost} in win-back (lapsed) · drag a card or use ◀ ▶ to move a deal — it saves to the shared book`;
+}
+
+/* ================= SMART INTAKE (IX namespace) ================= */
+const IX_CLASSES = {
+  contractor:   {icon:'🔨', label:'Construction / Contractors', lines:['GL','WC','Excess','CommercialAuto'], tags:['contractor']},
+  habitational: {icon:'🏢', label:'Habitational / Apartments / Real Estate', lines:['GL','Property','Excess'], tags:['property']},
+  restaurant:   {icon:'🍽️', label:'Restaurant / Bar / Hospitality', lines:['GL','Property','LiquorLiability','WC'], tags:['property','liquor']},
+  trucking:     {icon:'🚚', label:'Trucking / Transportation', lines:['CommercialAuto','Cargo','GL'], tags:['auto']},
+  autoservice:  {icon:'🔧', label:'Auto Service / Dealer', lines:['GL','Property','CommercialAuto'], tags:['property','auto']},
+  retail:       {icon:'🛍️', label:'Retail / Wholesale', lines:['GL','Property'], tags:['property']},
+  manufacturing:{icon:'🏭', label:'Manufacturing', lines:['GL','Property','Excess','CommercialAuto'], tags:['property']},
+  professional: {icon:'💼', label:'Professional Services', lines:['GL','Professional','Cyber'], tags:['professional']},
+  fitness:      {icon:'🏋️', label:'Gym / Fitness / Studio', lines:['GL','Professional','Property'], tags:['property','professional']},
+  cannabis:     {icon:'🌿', label:'Cannabis / CBD / Hemp', lines:['GL','Property','Excess'], tags:['property']},
+  vacant:       {icon:'🏚️', label:'Vacant Building / Land', lines:['GL','Property'], tags:['property']},
+  other:        {icon:'📋', label:'Other / General', lines:['GL'], tags:[]}
+};
+const IX_LINES = {
+  GL:{label:'General Liability',short:'GL'}, WC:{label:'Workers’ Comp',short:'WC'}, Excess:{label:'Excess / Umbrella',short:'Excess'},
+  Property:{label:'Commercial Property',short:'Property'}, CommercialAuto:{label:'Commercial Auto',short:'Commercial Auto'},
+  Cargo:{label:'Motor Truck Cargo',short:'Cargo'}, InlandMarine:{label:'Inland Marine / Equipment',short:'Inland Marine'},
+  Professional:{label:'Professional Liability (E&O)',short:'Professional'}, LiquorLiability:{label:'Liquor Liability',short:'Liquor'},
+  Cyber:{label:'Cyber Liability',short:'Cyber'}
+};
+const IX_STATES = ['FL','TX','CA','PA','GA','NC','SC','AZ','TN','NY','NJ','Other'];
+const IX_Q = [
+  {id:'yearsInBiz', label:'Years in business', type:'num', hint:'0 = startup'},
+  {id:'owners', label:'# of owners / officers', type:'num'},
+  {id:'revenue', label:'Annual gross revenue', type:'money'},
+  {id:'employees', label:'# of employees (excl. owners)', type:'num'},
+  {id:'fein', label:'FEIN (for the application)', type:'text', hint:'Optional now — needed to bind'},
+  {id:'mailing', label:'Mailing address', type:'text'},
+  {id:'subCosts', label:'Annual subcontractor costs', type:'money', needLine:'GL', when:a=>a.classKey==='contractor'},
+  {id:'pctSubbed', label:'% of work subcontracted out', type:'num', needLine:'GL', when:a=>a.classKey==='contractor'},
+  {id:'trade', label:'Primary trade', type:'select', needTag:'contractor', options:['General contractor','Roofing','Framing/Carpentry','Concrete/Masonry','Electrical','Plumbing/HVAC','Excavation/Grading','Painting','Handyman','Remodeling','Other']},
+  {id:'workMix', label:'Work mix', type:'select', needTag:'contractor', options:['Mostly new construction','Mostly remodel/service','Even split']},
+  {id:'residentialPct', label:'% residential work', type:'num', needTag:'contractor', hint:'Residential new-build is harder to place'},
+  {id:'heightWork', label:'Any work above 3 stories?', type:'yn', needTag:'contractor'},
+  {id:'payroll', label:'Annual payroll (all staff)', type:'money', needLine:'WC'},
+  {id:'statesOp', label:'States of operation', type:'text', needLine:'WC', hint:'e.g. FL, GA'},
+  {id:'ownersExcluded', label:'Owners excluded from WC?', type:'yn', needLine:'WC'},
+  {id:'expMod', label:'Experience mod (if any)', type:'text', needLine:'WC', hint:'Blank if none / new'},
+  {id:'buildingValue', label:'Building value (replacement)', type:'money', needLine:'Property'},
+  {id:'bppValue', label:'Business personal property value', type:'money', needLine:'Property'},
+  {id:'construction', label:'Construction type', type:'select', needLine:'Property', options:['Frame','Joisted Masonry','Non-Combustible','Masonry Non-Combustible','Fire Resistive']},
+  {id:'yearBuilt', label:'Year built', type:'num', needLine:'Property'},
+  {id:'roofYear', label:'Year roof last replaced', type:'num', needLine:'Property', hint:'Old roofs drive FL declinations'},
+  {id:'sprinklered', label:'Sprinklered?', type:'yn', needLine:'Property'},
+  {id:'coastal', label:'Coastal / wind-exposed county?', type:'yn', needLine:'Property'},
+  {id:'powerUnits', label:'# power units', type:'num', needLine:'CommercialAuto'},
+  {id:'radius', label:'Radius of operation', type:'select', needLine:'CommercialAuto', options:['Local (≤50 mi)','Intermediate (51–200 mi)','Long-haul (200+ mi)']},
+  {id:'drivers', label:'# drivers', type:'num', needLine:'CommercialAuto'},
+  {id:'youngestDriver', label:'Youngest driver age', type:'num', needLine:'CommercialAuto'},
+  {id:'mvrClean', label:'All MVRs reviewed & acceptable?', type:'yn', needLine:'CommercialAuto'},
+  {id:'commodities', label:'Commodities hauled', type:'text', needLine:'Cargo'},
+  {id:'maxLoad', label:'Max load value', type:'money', needLine:'Cargo'},
+  {id:'liquorPct', label:'% of sales from alcohol', type:'num', needLine:'LiquorLiability'},
+  {id:'entertainment', label:'Live entertainment / late hours?', type:'yn', needLine:'LiquorLiability'},
+  {id:'profession', label:'Profession / specialty', type:'text', needLine:'Professional'},
+  {id:'licensedPros', label:'# licensed professionals', type:'num', needLine:'Professional'},
+  {id:'lossesAny', label:'Any losses in the last 5 years?', type:'yn', section:1},
+  {id:'lossCount', label:'# of losses', type:'num', when:a=>a.lossesAny==='Yes'},
+  {id:'lossTotal', label:'Total incurred (paid + reserves)', type:'money', when:a=>a.lossesAny==='Yes'},
+  {id:'lossDesc', label:'Largest loss — what happened?', type:'textarea', when:a=>a.lossesAny==='Yes'},
+  {id:'lapse', label:'Any lapse in coverage?', type:'yn', section:1},
+  {id:'priorCarrier', label:'Prior / expiring carrier', type:'text', section:1},
+  {id:'expiringDate', label:'Target effective date', type:'text', section:1, hint:'When do they need coverage?'}
+];
+const IX_STEPS = ['Client','Operations','Coverage','Details','Loss & Risk','Review','Quote-ready'];
+
+let IX = {}, ixSel = [], ixStep = 0, ixLifeStage='intake', ixCurOut='application';
+
+function ixInit(){
+  const dl=$('ixBookList'); if(dl && !dl.childElementCount){
+    (CLIENTS||[]).forEach(c=>{ const n=c.businessName||c.folderName; if(n){ const o=document.createElement('option'); o.value=n; dl.appendChild(o);} });
+  }
+  ixRender();
+}
+function ixRenderLife(){
+  const idx=LIFE_ORDER.indexOf(ixLifeStage);
+  $('ixLife').innerHTML=LIFE.map((l,i)=>`<div class="lifeseg ${i<idx?'done':(i===idx?'on':'')}"><span class="dot">${l.icon}</span><span class="lbl">${l.label}</span></div>${i<LIFE.length-1?'<span class="lifearrow"></span>':''}`).join('');
+}
+function ixRenderSteps(){
+  $('ixSteps').innerHTML=IX_STEPS.map((t,i)=>`<div class="ix-step ${i<ixStep?'done':''} ${i===ixStep?'cur':''}" onclick="ixGoto(${i})" title="Jump to ${t}"><span class="n">${i<ixStep?'✓':i+1}</span>${t}</div>`).join('');
+}
+function ixGoto(i){ ixStep=i; ixRender(); window.scrollTo({top:0,behavior:'smooth'}); }
+function ixInput(q){
+  const v=IX[q.id]==null?'':IX[q.id];
+  if(q.type==='yn') return `<div class="ix-chips">${['Yes','No'].map(o=>`<div class="ix-chip ${v===o?'on':''}" onclick="ixSetYN('${q.id}','${o}')">${o}</div>`).join('')}</div>`;
+  if(q.type==='select') return `<select class="filter-select" style="width:100%" onchange="ixSet('${q.id}',this.value)"><option value="">— select —</option>${q.options.map(o=>`<option ${v===o?'selected':''}>${esc(o)}</option>`).join('')}</select>`;
+  if(q.type==='textarea') return `<textarea class="q-in" style="width:100%;min-height:64px" oninput="ixSet('${q.id}',this.value)">${esc(v)}</textarea>`;
+  return `<input class="q-in" style="width:100%" value="${esc(v)}" placeholder="${q.type==='money'?'$':''}" oninput="ixSet('${q.id}',this.value)">`;
+}
+function ixSet(id,val){ IX[id]=val; }
+function ixSetYN(id,val){ IX[id]=val; ixRender(); }
+function ixField(q){ return `<div class="fld"><label>${esc(q.label)}</label>${ixInput(q)}${q.hint?`<div class="hint" style="font-size:11px;color:var(--text-muted);margin-top:4px">${esc(q.hint)}</div>`:''}</div>`; }
+function ixActiveQ(){
+  const cls=IX_CLASSES[IX.classKey]||{tags:[]};
+  return IX_Q.filter(q=>{
+    if(q.needLine && !ixSel.includes(q.needLine)) return false;
+    if(q.needTag && !(cls.tags||[]).includes(q.needTag)) return false;
+    if(q.when && !q.when(IX)) return false;
+    return true;
+  });
+}
+function ixLineList(){ return ixSel.map(l=>IX_LINES[l].label).join(', ')||'—'; }
+
+function ixRender(){
+  if(!$('ixStage')) return;
+  if(ixStep<6){ ixLifeStage='intake'; } else if(ixLifeStage==='intake'){ ixLifeStage='quote'; }
+  ixRenderLife(); ixRenderSteps();
+  const s=$('ixStage');
+  if(ixStep===0){
+    s.innerHTML=`<div class="ix-card"><h3>Who is this for?</h3>
+      <p class="lead">Start typing — existing clients autocomplete from your book, so you never re-key a repeat.</p>
+      <div class="ix-grid">
+        <div class="fld"><label>Business name</label><input class="q-in" list="ixBookList" value="${esc(IX.name||'')}" oninput="ixOnName(this.value);ixNav()" placeholder="Business name, LLC"></div>
+        <div class="fld"><label>State</label><select class="filter-select" style="width:100%" onchange="ixSet('state',this.value);ixNav()"><option value="">— select —</option>${IX_STATES.map(st=>`<option ${IX.state===st?'selected':''}>${st}</option>`).join('')}</select></div>
+        <div class="fld"><label>Contact name</label><input class="q-in" value="${esc(IX.contact||'')}" oninput="ixSet('contact',this.value)" placeholder="Optional"></div>
+        <div class="fld"><label>Phone</label><input class="q-in" value="${esc(IX.phone||'')}" oninput="ixSet('phone',this.value)" placeholder="Optional"></div>
+        <div class="fld"><label>Email</label><input class="q-in" value="${esc(IX.email||'')}" oninput="ixSet('email',this.value)" placeholder="Optional"></div>
+        <div class="fld"><label>Lead source</label><select class="filter-select" style="width:100%" onchange="ixSet('source',this.value)">${['BoldPenguin','Referral','Renewal','Website','Cold call','Other'].map(o=>`<option ${IX.source===o?'selected':''}>${o}</option>`).join('')}</select></div>
+      </div></div>`;
+  } else if(ixStep===1){
+    s.innerHTML=`<div class="ix-card"><h3>What do they do?</h3>
+      <p class="lead">Pick the closest class — it decides the recommended coverages and which questions to ask. No wall of fields.</p>
+      <div class="ix-chips">${Object.entries(IX_CLASSES).map(([k,c])=>`<div class="ix-chip ${IX.classKey===k?'on':''}" onclick="ixPickClass('${k}')"><span>${c.icon}</span>${c.label}</div>`).join('')}</div>
+      <div class="fld" style="margin-top:16px"><label>Describe the operations in your words</label><textarea class="q-in" style="width:100%;min-height:64px" oninput="ixSet('operations',this.value)" placeholder="e.g. Commercial roofing — tear-off and re-roof, no residential new construction">${esc(IX.operations||'')}</textarea></div>
+      <div class="fld" style="margin-top:14px"><label>Exact class / NAICS code <span style="text-transform:none;color:var(--text-muted);font-weight:400">— optional, speeds quoting</span></label>
+        <div class="ccbox"><input class="q-in" id="ixCcInput" style="width:100%" autocomplete="off" placeholder="Search e.g. roofing, tree service, plumbing, restaurant..." value="${esc(IX.classQuery||'')}" oninput="ixCcSearch(this.value)"><div class="ccresults" id="ixCcResults" style="display:none"></div></div>
+        <div class="ccpick" id="ixCcPick">${ixCcPickHtml()}</div></div></div>`;
+  } else if(ixStep===2){
+    const cls=IX_CLASSES[IX.classKey]||{lines:[],label:''};
+    s.innerHTML=`<div class="ix-card"><h3>Coverage lines</h3>
+      <p class="lead">Pre-selected for this class. Tap to add or remove — the next screen asks only what these lines need.</p>
+      ${IX.classKey?`<div class="ix-reco">💡 For <b>${cls.label}</b>, most placements include: ${cls.lines.map(l=>IX_LINES[l].label).join(', ')}.</div>`:''}
+      <div class="ix-chips">${Object.entries(IX_LINES).map(([k,l])=>`<div class="ix-chip ${ixSel.includes(k)?'on':''}" onclick="ixToggle('${k}')"><span class="ck">✓</span>${l.label}</div>`).join('')}</div></div>`;
+  } else if(ixStep===3){
+    const qs=ixActiveQ().filter(q=>!q.section);
+    s.innerHTML=`<div class="ix-card"><h3>Risk details</h3>
+      <p class="lead">Only what matters for ${IX.classKey?IX_CLASSES[IX.classKey].label:'this risk'} and the lines you chose — this is what makes it quote-ready.</p>
+      <div class="ix-grid">${qs.map(ixField).join('')}</div></div>`;
+  } else if(ixStep===4){
+    const secQ=IX_Q.filter(q=>q.section);
+    const all=[];
+    secQ.forEach(q=>{ all.push(q); if(q.id==='lossesAny') IX_Q.filter(e=>e.id.indexOf('loss')===0&&e.when&&e.when(IX)).forEach(e=>all.push(e)); });
+    s.innerHTML=`<div class="ix-card"><h3>Loss history &amp; timing</h3>
+      <p class="lead">Underwriters ask this first. Honest answers get faster, firmer quotes.</p>
+      <div class="ix-grid">${all.map(ixField).join('')}</div></div>`;
+  } else if(ixStep===5){
+    s.innerHTML=`<div class="ix-card"><h3>Review before we package it</h3>
+      <p class="lead">This is everything we'll put on the application and submission. Jump back to fix anything.</p>
+      <div class="ix-review">${ixReviewRows()}</div></div>`;
+  } else if(ixStep===6){
+    s.innerHTML=ixOutputCard(); ixShowOut('application');
+  }
+  ixNav();
+}
+function ixOnName(v){ ixSet('name',v);
+  const hit=(CLIENTS||[]).find(c=>((c.businessName||c.folderName||'').toLowerCase())===v.toLowerCase());
+  if(hit){ if(hit.state&&!IX.state)IX.state=hit.state; if(hit.operations&&!IX.operations)IX.operations=hit.operations; if(hit.phone&&!IX.phone)IX.phone=hit.phone; }
+}
+function ixPickClass(k){ IX.classKey=k; if(IX._autoLines!==k){ ixSel=[...IX_CLASSES[k].lines]; IX._autoLines=k; } ixRender(); }
+function ixToggle(k){ ixSel=ixSel.includes(k)?ixSel.filter(x=>x!==k):[...ixSel,k]; ixRender(); }
+
+function ixLabeled(ids){ return ids.map(id=>{ const q=IX_Q.find(x=>x.id===id); if(!q)return null; const v=IX[id]; if(v==null||v==='')return null; return `  • ${q.label}: ${v}`; }).filter(Boolean).join('\n'); }
+function ixApplication(){
+  const cls=IX_CLASSES[IX.classKey]||{label:'—'};
+  const ids=ixActiveQ().map(q=>q.id).filter(id=>['yearsInBiz','owners','employees','revenue'].indexOf(id)===-1);
+  return `ACORD-STYLE COMMERCIAL APPLICATION (DRAFT) — ZENIX INSURANCE
+================================================================
+APPLICANT
+  Named insured:   ${IX.name||'—'}
+  Mailing address: ${IX.mailing||'—'}
+  Contact:         ${IX.contact||'—'}  ${IX.phone||''}  ${IX.email||''}
+  FEIN:            ${IX.fein||'(to collect at bind)'}
+  State:           ${IX.state||'—'}
+  Years in biz:    ${IX.yearsInBiz||'—'}   Owners: ${IX.owners||'—'}   Employees: ${IX.employees||'—'}
+  Annual revenue:  ${IX.revenue?ixMoney(ixNum(IX.revenue)):'—'}
+
+NATURE OF BUSINESS
+  Class:       ${cls.label}${(IX.classCode||IX.naics)?('\n  Class code:  '+(IX.classCode?('GL '+IX.classCode+'  '):'')+(IX.naics?('NAICS '+IX.naics):'')+(IX.classDesc?('  — '+IX.classDesc):'')):''}
+  Operations:  ${IX.operations||'—'}
+
+COVERAGES REQUESTED
+  ${ixSel.map(l=>'• '+IX_LINES[l].label).join('\n  ')||'—'}
+
+RISK-SPECIFIC DETAIL
+${ixLabeled(ids)||'  • (none entered)'}
+
+LOSS HISTORY
+  • Losses last 5 yrs: ${IX.lossesAny||'—'}${IX.lossCount?('  ('+IX.lossCount+' / '+(IX.lossTotal?ixMoney(ixNum(IX.lossTotal)):'—')+')'):''}
+  ${IX.lossDesc?('• Largest: '+IX.lossDesc):''}
+  • Coverage lapse: ${IX.lapse||'—'}
+  • Prior/expiring carrier: ${IX.priorCarrier||'—'}   Target eff: ${IX.expiringDate||'—'}
+
+Prepared by Zenix Insurance. Draft application — signature required before binding.`;
+}
+function ixSubmission(){
+  const cls=IX_CLASSES[IX.classKey]||{label:'—'};
+  const ids=ixActiveQ().map(q=>q.id).filter(id=>['revenue','payroll','yearsInBiz'].indexOf(id)===-1);
+  return `SUBMISSION TO MARKET — ZENIX INSURANCE
+======================================
+Insured:     ${IX.name||'—'}  |  ${IX.state||'—'}  |  Target eff: ${IX.expiringDate||'open'}
+Class:       ${cls.label}${(IX.classCode||IX.naics)?('  ['+(IX.classCode?('GL '+IX.classCode):('NAICS '+IX.naics))+']'):''}
+Operations:  ${IX.operations||'—'}
+Coverage:    ${ixLineList()}
+Revenue:     ${IX.revenue?ixMoney(ixNum(IX.revenue)):'—'}   Payroll: ${IX.payroll?ixMoney(ixNum(IX.payroll)):'—'}   Yrs: ${IX.yearsInBiz||'—'}
+
+DETAIL
+${ixLabeled(ids)||'  • (see application)'}
+
+LOSSES: ${IX.lossesAny==='Yes'?((IX.lossCount||'?')+' loss(es), '+(IX.lossTotal?ixMoney(ixNum(IX.lossTotal)):'amount TBD')+(IX.lossDesc?(' — '+IX.lossDesc):'')):'None in 5 years'}
+Prior carrier: ${IX.priorCarrier||'—'}
+
+Please advise appetite + indication. Contact: ${IX.contact||'Zenix'} ${IX.phone||''}`;
+}
+function ixProposalModel(){
+  const premium=ixNum(IX.carrierQuote);
+  const fee=ixNum(IX.brokerFee)!=null?ixNum(IX.brokerFee):500;
+  const total=(premium||0)+fee;
+  const down=total*0.35, monthly=(total-down)*1.06/9;
+  return {premium,fee,total,down,monthly};
+}
+const IX_DISC={
+ FL:'Surplus lines placement — not protected by the Florida Insurance Guaranty Act. Broker fee is fully earned at inception.',
+ TX:'Placed with an eligible surplus lines insurer not protected by the Texas guaranty fund. Broker fee fully earned at inception.',
+ PA:'Not protected by the Pennsylvania Property & Casualty Insurance Guaranty Association. Broker fee fully earned at inception.',
+ CA:'Placed with a non-admitted insurer, not protected by CIGA. Broker fee is agency compensation, fully earned at inception.',
+ _default:'Surplus lines placement — not protected by the state guaranty fund. Broker fee fully earned at inception.'
+};
+function ixProposal(){
+  const m=ixProposalModel();
+  const disc=IX_DISC[IX.state]||IX_DISC._default;
+  return `ZENIX INSURANCE — CLIENT PROPOSAL
+=================================
+Prepared for:  ${IX.name||'—'}
+Date:          ${IX.expiringDate||new Date().toISOString().slice(0,10)}
+Operations:    ${IX.operations||'—'}
+
+COVERAGE
+  ${ixSel.map(l=>'• '+IX_LINES[l].label).join('\n  ')||'—'}
+
+YOUR INVESTMENT
+  Premium (from carrier, incl. taxes & fees).... ${m.premium!=null?ixMoney2(m.premium):'(enter carrier quote)'}
+  Zenix broker fee.............................. ${ixMoney2(m.fee)}
+  --------------------------------------------------
+  TOTAL......................................... ${m.premium!=null?ixMoney2(m.total):'—'}
+  ${m.premium!=null?('Payment: '+ixMoney2(m.down)+' down + 9 monthly payments of ~'+ixMoney2(m.monthly)):''}
+
+DISCLOSURE
+${disc}`;
+}
+function ixReviewRows(){
+  const cls=IX_CLASSES[IX.classKey]||{label:'—'};
+  const base=[['Business',IX.name],['State',IX.state],['Contact',[IX.contact,IX.phone,IX.email].filter(Boolean).join(' · ')],['Lead source',IX.source],['Class',cls.label],['Operations',IX.operations],['Coverage',ixLineList()]];
+  let html=base.map(r=>`<div class="k">${r[0]}</div><div class="v">${esc(r[1]||'—')}</div>`).join('');
+  html+=`<div class="ix-sec">Risk details</div>`;
+  ixActiveQ().forEach(q=>{ if(IX[q.id]!=null&&IX[q.id]!=='') html+=`<div class="k">${esc(q.label)}</div><div class="v">${esc(IX[q.id])}</div>`; });
+  ['lossesAny','lossCount','lossTotal','lossDesc','lapse','priorCarrier','expiringDate'].forEach(id=>{const q=IX_Q.find(x=>x.id===id); if(IX[id]!=null&&IX[id]!=='') html+=`<div class="k">${esc(q.label)}</div><div class="v">${esc(IX[id])}</div>`;});
+  return html;
+}
+function ixOutputCard(){
+  return `<div class="ix-card"><h3>Quote-ready 🎯</h3>
+    <p class="lead">Send the submission to your MGA; when the quote comes back, drop the number into the proposal.</p>
+    <div class="tabs" style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+      <div class="filter-select" style="cursor:pointer" id="ixtab-application" onclick="ixShowOut('application')">📝 Application</div>
+      <div class="filter-select" style="cursor:pointer" id="ixtab-submission" onclick="ixShowOut('submission')">📤 MGA submission</div>
+      <div class="filter-select" style="cursor:pointer" id="ixtab-proposal" onclick="ixShowOut('proposal')">📄 Client proposal</div>
+    </div>
+    <div id="ixOutArea"></div>
+    <div class="ix-nav" style="margin-top:14px">
+      <button class="act-btn primary" onclick="ixSaveDeal()">＋ Save to pipeline</button>
+      <button class="act-btn" onclick="window.print()">🖨 Print / Save PDF</button>
+      <button class="act-btn" onclick="ixReset()">↺ New intake</button>
+      <span id="ixSaveMsg" style="font-size:12px;color:var(--text-muted)"></span>
+    </div></div>`;
+}
+function ixShowOut(w){
+  ixCurOut=w;
+  ['application','submission','proposal'].forEach(t=>{const el=$('ixtab-'+t); if(el) el.style.background=(t===w)?'var(--purple)':'';el&&(el.style.color=(t===w)?'#fff':'');});
+  const a=$('ixOutArea'); if(!a) return;
+  if(w==='proposal'){
+    a.innerHTML=`<div style="background:#0b1120;border:1px solid var(--border-color);border-radius:12px;padding:14px 16px;margin-bottom:12px">
+       <div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px">Got the quote back from the MGA? Enter it — taxes &amp; fees are already in the carrier's number.</div>
+       <div class="ix-grid">
+         <div class="fld"><label>Carrier quoted premium (incl. taxes/fees)</label><input class="q-in" value="${esc(IX.carrierQuote||'')}" placeholder="$" oninput="ixSet('carrierQuote',this.value);ixShowOut('proposal')"></div>
+         <div class="fld"><label>Your broker fee</label><input class="q-in" value="${IX.brokerFee!=null?esc(IX.brokerFee):'500'}" placeholder="$" oninput="ixSet('brokerFee',this.value);ixShowOut('proposal')"></div>
+       </div></div>
+       <div style="display:flex;justify-content:flex-end;margin-bottom:8px"><button class="act-btn" onclick="ixCopy()">⧉ Copy proposal</button></div>
+       <div class="ix-out">${esc(ixProposal())}</div>`;
+  } else {
+    a.innerHTML=`<div style="display:flex;justify-content:flex-end;margin-bottom:8px"><button class="act-btn" onclick="ixCopy()">⧉ Copy this</button></div><div class="ix-out">${esc(w==='application'?ixApplication():ixSubmission())}</div>`;
+  }
+}
+function ixCopy(){ const t=ixCurOut==='application'?ixApplication():(ixCurOut==='submission'?ixSubmission():ixProposal());
+  navigator.clipboard.writeText(t).then(()=>{ const m=$('ixSaveMsg'); if(m){m.textContent='✓ Copied.'; setTimeout(()=>m.textContent='',1600);} }); }
+
+async function ixSaveDeal(){
+  if(!IX.name){ alert('Enter a business name first'); return; }
+  const m=ixProposalModel();
+  const rec={folderId:null,folderName:IX.name,driveUrl:null,businessName:IX.name,dba:null,
+    contactName:IX.contact||null,phone:IX.phone||null,email:IX.email||null,address:IX.mailing||null,city:null,state:IX.state||null,
+    operations:IX.operations||(IX_CLASSES[IX.classKey]||{}).label||'new intake',assignedTo:null,
+    lifeStage:'quote', stage:'quoted', source:'intake',
+    intake:{classKey:IX.classKey,lines:[...ixSel],answers:{...IX}},
+    policies:ixSel.map(k=>({line:IX_LINES[k].short,carrier:null,wholesaler:null,policyNumber:null,premium:(ixNum(IX.carrierQuote)||null),effectiveDate:null,expirationDate:null,status:'quoted',sourceDoc:'smart intake'})),
+    fileCount:0,lastDocDate:new Date().toISOString().slice(0,10),notes:'Created via Smart Intake'};
+  const msg=$('ixSaveMsg'); if(msg) msg.textContent='Saving…';
+  const clean={}; Object.keys(rec).forEach(k=>{ if(k[0]!=='_') clean[k]=rec[k]; });
+  try{
+    const {data,error}=await sb.from('clients').insert({data:clean}).select('id').single();
+    if(error){ if(msg){msg.style.color='#fca5a5';msg.textContent='Could not save: '+error.message;} return; }
+    rec._rowId=data.id; CLIENTS.push(rec);
+    decorate(); plDecorate(); rerenderAll();
+    go('pipeline'); renderPipeline();
+  }catch(e){ if(msg){msg.style.color='#fca5a5';msg.textContent='Could not save: '+e.message;} }
+}
+function ixReset(){ IX={}; ixSel=[]; ixStep=0; ixLifeStage='intake'; ixRender(); window.scrollTo(0,0); }
+function ixStart(){ ixReset(); go('intake'); ixInit(); }
+function ixStartFromLeadKey(key){
+  const l=(LEADS||[]).find(x=>leadKey(x.data)===key); if(!l){ ixStart(); return; }
+  const d=l.data;
+  IX={}; ixSel=[]; ixStep=1; ixLifeStage='intake';
+  IX.name=d.legal_entity||''; IX.state=d.state||''; IX.phone=d.phone_number||''; IX.source='BoldPenguin';
+  IX.operations=String(d.business_class||'').replace(/^[0-9]+\s*-\s*/,'');
+  IX.classKey=ixGuessClass(d.business_class,IX.operations);
+  if(IX.classKey){ ixSel=[...IX_CLASSES[IX.classKey].lines]; IX._autoLines=IX.classKey; }
+  go('intake'); ixInit();
+}
+function ixGuessClass(bc,ops){
+  const s=((bc||'')+' '+(ops||'')).toLowerCase();
+  if(/contract|roof|construct|plumb|electric|hvac|carpen|concrete|excavat|remodel|handyman|paint/.test(s)) return 'contractor';
+  if(/restaurant|bar|cafe|grill|food|hospitality|catering/.test(s)) return 'restaurant';
+  if(/truck|transport|haul|logistics|freight|carrier/.test(s)) return 'trucking';
+  if(/apartment|habitational|real estate|rental|landlord|property mgmt|lessor/.test(s)) return 'habitational';
+  if(/auto|dealer|mechanic|repair shop|body shop/.test(s)) return 'autoservice';
+  if(/manufactur|fabricat|assembl/.test(s)) return 'manufacturing';
+  if(/consult|account|attorney|law|architect|engineer|profession/.test(s)) return 'professional';
+  if(/gym|fitness|studio|yoga|trainer/.test(s)) return 'fitness';
+  if(/cannabis|cbd|hemp|dispensary/.test(s)) return 'cannabis';
+  if(/retail|store|shop|wholesale|boutique/.test(s)) return 'retail';
+  return 'other';
+}
+function ixCanAdvance(){
+  if(ixStep===0) return !!(IX.name&&IX.state);
+  if(ixStep===1) return !!IX.classKey;
+  if(ixStep===2) return ixSel.length>0;
+  return true;
+}
+function ixNav(){
+  const back = ixStep>0 ? `<button class="act-btn" onclick="ixPrev()">← Back</button>`:'<span></span>';
+  let next='';
+  if(ixStep<6){ const label=ixStep===5?'Generate application & submission →':'Continue →';
+    next=`<button class="act-btn primary" onclick="ixNext()" ${ixCanAdvance()?'':'disabled'}>${label}</button>`; }
+  $('ixNav').innerHTML=`${back}<div style="flex:1"></div>${next}`;
+}
+function ixNext(){ if(ixCanAdvance()&&ixStep<6){ixStep++; ixRender(); window.scrollTo({top:0,behavior:'smooth'});} }
+function ixPrev(){ if(ixStep>0){ixStep--; ixRender(); window.scrollTo({top:0,behavior:'smooth'});} }
+
+/* ---- class-code search (queries Supabase class_codes) ---- */
+function ixCcPickHtml(){
+  if(!(IX.classCode||IX.naics)) return '';
+  const label=(IX.classCode?('GL '+IX.classCode):('NAICS '+IX.naics));
+  return '✓ '+esc(label)+(IX.classDesc?(' — '+esc(IX.classDesc)):'')+' <span class="x" onclick="ixCcClear()">✕ clear</span>';
+}
+let _ccTimer=null;
+function ixCcSearch(q){
+  IX.classQuery=q;
+  clearTimeout(_ccTimer);
+  const box=$('ixCcResults'); if(!box) return;
+  if(!q || q.trim().length<2){ box.style.display='none'; return; }
+  _ccTimer=setTimeout(async ()=>{
+    try{
+      const {data,error}=await sb.from('class_codes').select('code,naics,description').ilike('keywords','%'+q.trim().toLowerCase()+'%').limit(10);
+      if(error||!data||!data.length){ box.innerHTML='<div style="color:var(--text-muted)">No matches</div>'; box.style.display='block'; return; }
+      box.innerHTML=data.map(r=>{
+        const cd=r.code?('GL '+r.code):(r.naics?('NAICS '+r.naics):'');
+        const arg=encodeURIComponent(JSON.stringify({code:r.code||'',naics:r.naics||'',desc:r.description||''}));
+        return `<div onclick="ixCcPick('${arg}')"><span class="code">${esc(cd)}</span>${esc(r.description||'')}</div>`;
+      }).join('');
+      box.style.display='block';
+    }catch(e){ box.style.display='none'; }
+  },250);
+}
+function ixCcPick(arg){
+  try{ const r=JSON.parse(decodeURIComponent(arg));
+    IX.classCode=r.code||''; IX.naics=r.naics||''; IX.classDesc=r.desc||'';
+    if(!IX.operations && r.desc) IX.operations=r.desc;
+  }catch(e){}
+  const box=$('ixCcResults'); if(box) box.style.display='none';
+  const pk=$('ixCcPick'); if(pk) pk.innerHTML=ixCcPickHtml();
+}
+function ixCcClear(){ IX.classCode=''; IX.naics=''; IX.classDesc=''; const pk=$('ixCcPick'); if(pk) pk.innerHTML=''; }
+
+/* ================= MARKETS directory ================= */
+let MARKETS=[]; let _mkLoaded=false;
+async function loadMarkets(){
+  try{ const {data}=await sb.from('markets').select('*').order('name'); MARKETS=data||[]; _mkLoaded=true; }
+  catch(e){ MARKETS=[]; }
+}
+function mkPct(v){ return (v==null||v==='')?'—':(Number(v).toFixed(2).replace(/\.00$/,'')+'%'); }
+function renderMarkets(){
+  if(!$('marketsTable')) return;
+  if(!_mkLoaded){ loadMarkets().then(renderMarkets); }
+  const q=($('mkSearch').value||'').toLowerCase(), ty=$('mkType').value, kd=$('mkKind').value;
+  let rows=MARKETS.filter(m=>{
+    if(q && !((m.name||'')+' '+(m.lines||'')+' '+(m.notes||'')).toLowerCase().includes(q)) return false;
+    if(ty==='E&S' && m.market_type!=='E&S') return false;
+    if(ty==='Admitted' && m.market_type!=='Admitted') return false;
+    if(kd==='carrier' && m.kind!=='carrier') return false;
+    if(kd==='mga' && !(m.kind && m.kind!=='carrier')) return false;
+    return true;
+  });
+  rows.sort((a,b)=>(a.name||'').localeCompare(b.name||''));
+  const es=MARKETS.filter(m=>m.market_type==='E&S').length, adm=MARKETS.filter(m=>m.market_type==='Admitted').length, comm=MARKETS.filter(m=>m.commission_new!=null).length;
+  $('mkKpis').innerHTML=[
+    ['🏦','Markets on file',MARKETS.length],
+    ['🌊','E&S / non-admitted',es],
+    ['🏛','Admitted',adm],
+    ['％','With commission %',comm]
+  ].map(k=>`<div class="kpi"><span class="ic">${k[0]}</span><h4>${k[2]}</h4><p>${k[1]}</p></div>`).join('');
+  const typePill=m=>{ if(m.market_type==='E&S') return '<span class="pill mk-es">E&S</span>'; if(m.market_type==='Admitted') return '<span class="pill mk-adm">Admitted</span>'; return '<span class="pill mk-unk">—</span>'; };
+  const link=(u,label)=> u?`<a class="act-btn" href="${esc(u.match(/^https?:/)?u:'https://'+u)}" target="_blank" rel="noopener" style="padding:4px 9px">${label}</a>`:'';
+  $('marketsTable').innerHTML='<thead><tr><th>Market</th><th>Type</th><th>Kind</th><th>Lines / appetite</th><th>Comm (new / renew)</th><th>Links</th></tr></thead><tbody>'+
+    (rows.map(m=>`<tr>
+      <td style="font-weight:600">${esc(m.name||'—')}${m.renewal_process?`<div style="font-size:10px;color:var(--text-muted)">renewal: ${esc(m.renewal_process)}</div>`:''}</td>
+      <td>${typePill(m)}</td>
+      <td style="font-size:12px;color:var(--text-secondary)">${esc(m.kind||'—')}</td>
+      <td style="max-width:240px;font-size:12px;color:var(--text-secondary)">${esc(m.lines||'—')}</td>
+      <td style="font-variant-numeric:tabular-nums">${mkPct(m.commission_new)} <span style="color:var(--text-muted)">/</span> ${mkPct(m.commission_renewal)}</td>
+      <td><div class="actions">${link(m.quote_url,'⚡ Quote')}${link(m.portal_url,'⧉ Portal')}${link(m.commissions_url,'$ Comm')}${link(m.lossrun_url,'Loss')}</div></td>
+    </tr>`).join('')||'<tr><td colspan="6"><div class="empty-note">No markets match</div></td></tr>')+'</tbody>';
+  $('mkFoot').textContent=`● ${rows.length} of ${MARKETS.length} markets · carrier & wholesaler directory from Airtable`;
+}
+
+</script>
+<!-- ================= REAL-TIME LEADS (v3, 2026-08-26) =================
+     Pushes new BoldPenguin leads into the open page the moment the webhook
+     writes them. Supabase Realtime on public.leads is the primary channel;
+     a lightweight head-count poll is the fallback for a dropped socket or a
+     laptop waking from sleep. Nothing here changes how leads are stored. -->
+<style>
+#ldLiveWrap{position:fixed;right:18px;bottom:18px;z-index:9999;display:flex;flex-direction:column;gap:10px;align-items:flex-end}
+.ld-toast{min-width:260px;max-width:340px;background:#0b1220f2;border:1px solid #22c55e66;border-left:3px solid #22c55e;
+  border-radius:10px;padding:11px 13px;box-shadow:0 10px 34px #000a;backdrop-filter:blur(6px);cursor:pointer;
+  animation:ldIn .32s cubic-bezier(.2,.9,.3,1.3);font-size:12.5px;color:#e2e8f0}
+.ld-toast b{display:block;font-size:13.5px;color:#7dd3fc;margin-bottom:2px}
+.ld-toast .sub{color:#94a3b8;font-size:11.5px;margin-top:3px}
+.ld-toast.out{animation:ldOut .3s forwards}
+@keyframes ldIn{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes ldOut{to{opacity:0;transform:translateX(24px)}}
+#ldLiveDot{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;color:#4ade80;margin-left:10px;vertical-align:middle}
+#ldLiveDot i{width:6px;height:6px;border-radius:50%;background:#22c55e;display:inline-block;animation:ldPulse 2s infinite}
+#ldLiveDot.stale{color:#fbbf24} #ldLiveDot.stale i{background:#fbbf24;animation:none}
+@keyframes ldPulse{0%,100%{box-shadow:0 0 0 0 #22c55e88}70%{box-shadow:0 0 0 6px #22c55e00}}
+.nav-badge{display:inline-block;min-width:16px;padding:0 5px;margin-left:5px;border-radius:9px;background:#22c55e;
+  color:#04170c;font-size:10px;font-weight:800;line-height:16px;text-align:center}
+</style>
+<div id="ldLiveWrap"></div>
+<script>
+(function(){
+  var POLL_MS = 45000, booted = false, chan = null, poller = null, lastOk = true;
+  var lastSeen = null;           // ISO of the newest leads.created_at we know about
+  var unseen = 0;                // new leads that arrived while off the Leads tab
+  var wrap = function(){ return document.getElementById('ldLiveWrap'); };
+
+  function chime(){
+    try{
+      var C = window.AudioContext || window.webkitAudioContext; if(!C) return;
+      var ctx = new C(), o = ctx.createOscillator(), g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination); o.type = 'sine';
+      o.frequency.setValueAtTime(880, ctx.currentTime);
+      o.frequency.setValueAtTime(1320, ctx.currentTime + 0.11);
+      g.gain.setValueAtTime(0.0001, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.16, ctx.currentTime + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.42);
+      o.start(); o.stop(ctx.currentTime + 0.45);
+    }catch(e){}
+  }
+
+  function toast(d){
+    var w = wrap(); if(!w) return;
+    var cost = (d && d.purchase_amount != null) ? ('$' + d.purchase_amount) : '';
+    var bits = [d && d.state, String((d && d.business_class) || '').replace(/^[0-9]+\s*-\s*/, ''), cost]
+                 .filter(Boolean).join(' · ');
+    var el = document.createElement('div');
+    el.className = 'ld-toast';
+    el.innerHTML = '<b>◎ New lead — ' + esc((d && d.legal_entity) || 'BoldPenguin') + '</b>' +
+                   esc((d && d.phone_number) || '') +
+                   (bits ? '<div class="sub">' + esc(bits.slice(0, 70)) + '</div>' : '') +
+                   '<div class="sub">click to open Leads</div>';
+    el.onclick = function(){ try{ go('leads'); }catch(e){} el.remove(); clearBadge(); };
+    w.appendChild(el);
+    setTimeout(function(){ el.classList.add('out'); setTimeout(function(){ el.remove(); }, 320); }, 12000);
+  }
+
+  function badge(){
+    var b = document.querySelector('.nav-btn[data-view="leads"]'); if(!b) return;
+    var s = b.querySelector('.nav-badge');
+    if(!unseen){ if(s) s.remove(); return; }
+    if(!s){ s = document.createElement('span'); s.className = 'nav-badge'; b.appendChild(s); }
+    s.textContent = unseen;
+  }
+  function clearBadge(){ unseen = 0; badge(); }
+
+  function dot(ok){
+    lastOk = ok;
+    var f = document.getElementById('ldFoot'); if(!f) return;
+    var d = document.getElementById('ldLiveDot');
+    if(!d){ d = document.createElement('span'); d.id = 'ldLiveDot'; f.appendChild(d); }
+    d.className = ok ? '' : 'stale';
+    d.innerHTML = '<i></i>' + (ok ? 'live' : 'reconnecting…');
+  }
+
+  // Full refresh of the leads dataset + repaint, preserving the user's filters.
+  async function refresh(newRows){
+    try{
+      await loadLeads();
+      if(typeof renderLeads === 'function') renderLeads();
+      dot(true);
+      (newRows || []).forEach(function(d){ toast(d); });
+      if(newRows && newRows.length){
+        chime();
+        var onLeads = (document.getElementById('view-leads') || {}).classList;
+        if(!onLeads || !onLeads.contains('active')){ unseen += newRows.length; badge(); }
+      }
+    }catch(e){}
+  }
+
+  // Fallback: ask only for a count of rows newer than what we've seen.
+  async function poll(){
+    try{
+      var q = sb.from('leads').select('id', { count: 'exact', head: true });
+      if(lastSeen) q = q.gt('created_at', lastSeen);
+      var r = await q;
+      if(r.error) { dot(false); return; }
+      if(lastSeen === null){ lastSeen = new Date().toISOString(); dot(true); return; }
+      if((r.count || 0) > 0){
+        lastSeen = new Date().toISOString();
+        var before = LEADS.length;
+        await refresh([]);
+        if(LEADS.length > before) { chime(); toast(LEADS[0] && LEADS[0].data); }
+      } else { dot(true); }
+    }catch(e){ dot(false); }
+  }
+
+  function subscribe(){
+    try{
+      if(chan) { try{ sb.removeChannel(chan); }catch(e){} }
+      chan = sb.channel('leads-live')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'leads' }, function(p){
+          var d = p && p.new && p.new.data;
+          if(!d || d._type !== 'lead') return;
+          lastSeen = new Date().toISOString();
+          refresh([d]);
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'lead_status' }, function(){
+          refresh([]);
+        })
+        .subscribe(function(status){
+          dot(status === 'SUBSCRIBED');
+          if(status === 'CHANNEL_ERROR' || status === 'TIMED_OUT'){ setTimeout(subscribe, 5000); }
+        });
+    }catch(e){ dot(false); }
+  }
+
+  function start(){
+    if(booted) return; booted = true;
+    lastSeen = new Date().toISOString();
+    subscribe();
+    poller = setInterval(poll, POLL_MS);
+    // A sleeping laptop kills the socket; catch up the moment the tab is looked at.
+    document.addEventListener('visibilitychange', function(){
+      if(document.visibilityState === 'visible'){ subscribe(); poll(); }
+    });
+    window.addEventListener('online', function(){ subscribe(); poll(); });
+    var nav = document.querySelector('.nav-btn[data-view="leads"]');
+    if(nav) nav.addEventListener('click', clearBadge);
+    // renderLeads() rewrites the footer text, which wipes the indicator - put it
+    // back after every repaint so a filter change doesn't look like it went dead.
+    if(typeof renderLeads === 'function'){
+      var _origRender = renderLeads;
+      window.renderLeads = renderLeads = function(){
+        var r = _origRender.apply(this, arguments);
+        try{ dot(lastOk); }catch(e){}
+        return r;
+      };
+    }
+    var sub = document.querySelector('#view-leads .page-sub');
+    if(sub) sub.textContent = 'Every lead purchased from the exchange — pushed in live the second BoldPenguin sends it, and reconciled against the daily report. Click a phone number to call.';
+    dot(true);
+  }
+
+  // Wait until the app has signed in and loaded its first batch of leads.
+  var tries = 0;
+  var waiter = setInterval(function(){
+    // Guarded: if the app's own scripts failed to run, LEADS stays in the
+    // temporal dead zone and a bare `typeof` throws. Never spam the console.
+    try{
+      if(++tries > 1200){ clearInterval(waiter); return; }   // give up after ~14 min
+      var authed = document.getElementById('authWrap') && document.getElementById('authWrap').style.display === 'none';
+      if(!authed || !document.getElementById('ldFoot')) return;
+      if(typeof LEADS === 'undefined' || typeof loadLeads !== 'function') return;
+      clearInterval(waiter); start();
+    }catch(e){ /* app not ready (or broken) - keep quiet */ }
+  }, 700);
+})();
+</script>
+<!-- ================= LEAD ROW → PROSPECT CARD (v4, 2026-08-27) =================
+     Clicking anywhere on a lead row now opens something:
+       • lead already matched to a client in the book  → the normal client modal (openModal)
+       • lead not yet in the book                       → a prospect card with everything
+         BoldPenguin sent, status control, click-to-call/email, and Start Intake /
+         Quick Quote handoffs (Start Intake is what creates the pipeline record).
+     Purely additive: one style block, one modal div, one script block. renderLeads() only
+     gained class="ld-row" data-key on each <tr>. -->
+<style>
+#leadsTable tbody tr.ld-row{cursor:pointer}
+#leadsTable tbody tr.ld-row:hover td{background:var(--bg-card-hover)}
+#leadsTable tbody tr.ld-row td:nth-child(2){color:#7dd3fc}
+#leadsTable tbody tr.ld-row:hover td:nth-child(2){text-decoration:underline;text-underline-offset:3px}
+.ldm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px 20px}
+.ldm-grid .k{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);margin-bottom:3px}
+.ldm-grid .v{font-size:13px;color:var(--text-primary);word-break:break-word}
+.ldm-grid .v a{color:#7dd3fc;text-decoration:none}
+.ldm-grid .v a:hover{text-decoration:underline}
+.ldm-sec{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-secondary);margin:20px 0 10px;display:flex;align-items:center;gap:10px}
+.ldm-sec:after{content:"";flex:1;height:1px;background:var(--border-subtle)}
+.ldm-next{background:#16a76514;border:1px solid #16a76544;border-radius:12px;padding:13px 15px;margin-top:18px;font-size:12.5px;color:#cbd5e1;line-height:1.5}
+.ldm-next b{color:#4ade80}
+.ldm-status{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;font-size:12.5px;color:var(--text-secondary)}
+.ldm-acts{display:flex;flex-direction:column;gap:5px;font-size:12.5px;color:var(--text-secondary)}
+.ldm-acts .ic{display:inline-block;width:18px;text-align:center}
+.ldm-acts .t{color:var(--text-muted);font-size:11px;margin-left:6px}
+.ldm-raw{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;color:var(--text-secondary);background:#0b1120;border:1px solid var(--border-color);border-radius:10px;padding:10px 12px;white-space:pre-wrap;word-break:break-word;max-height:220px;overflow:auto;margin-top:8px}
+</style>
+<div class="modal-bg" id="ldModalBg" onclick="if(event.target===this)ldClose()">
+  <div class="modal">
+    <div class="modal-head" style="padding-bottom:18px">
+      <div class="mh-top">
+        <div class="avatar" id="ldmAvatar">–</div>
+        <div class="mh-title">
+          <h2 id="ldmName"></h2>
+          <div class="ops" id="ldmOps"></div>
+          <div class="contact" id="ldmContact"></div>
+        </div>
+        <div class="mh-actions" id="ldmActions"></div>
+      </div>
+    </div>
+    <div class="modal-body" id="ldmBody"></div>
+  </div>
+</div>
+<script>
+(function(){
+  var g = function(id){ return document.getElementById(id); };
+  var cur = null; // key of the lead currently shown
+
+  // Friendly labels for the fields BoldPenguin sends (daily report + webhook extras).
+  var LABELS = {
+    legal_entity:'Business', phone_number:'Phone', contact_name:'Contact', contact_email:'Email',
+    business_class:'Class', naics:'NAICS', naics_code:'NAICS', coverage_type:'Coverage requested',
+    state:'State', city:'City', zip:'ZIP', address:'Address', legal_structure:'Legal structure',
+    years_in_business:'Years in business', purchase_amount:'Cost', sent_timestamp_edt:'Received (ET)',
+    campaign:'Campaign', campaign_name:'Campaign', source:'Source', website:'Website',
+    annual_revenue:'Annual revenue', employees:'Employees', num_employees:'Employees', payroll:'Payroll'
+  };
+  // Order the grid follows; anything else BoldPenguin sent is appended after.
+  var ORDER = ['sent_timestamp_edt','purchase_amount','business_class','naics','naics_code','coverage_type',
+               'contact_name','contact_email','phone_number','city','state','zip','address','legal_structure',
+               'years_in_business','annual_revenue','employees','num_employees','payroll','website','campaign','campaign_name','source'];
+  var HIDE = { legal_entity:1, _type:1 };
+
+  function human(k){ return LABELS[k] || String(k).replace(/^_/,'').replace(/_/g,' ').replace(/\b\w/g, function(c){ return c.toUpperCase(); }); }
+  function fmtVal(k, v){
+    if(v == null || v === '') return null;
+    if(Array.isArray(v)) return v.length ? esc(v.map(String).join(', ')) : null;
+    if(typeof v === 'object') return '<span class="ldm-raw" style="display:block;margin:0">' + esc(JSON.stringify(v, null, 1)) + '</span>';
+    var s = String(v);
+    if(k === 'purchase_amount') return '$' + esc(s);
+    if(k === 'contact_email' && /@/.test(s)) return '<a href="mailto:' + esc(s) + '">' + esc(s) + '</a>';
+    if(k === 'phone_number'){ var t = s.replace(/[^0-9]/g,''); return t ? '<a href="tel:+1' + t + '">✆ ' + esc(s) + '</a>' : esc(s); }
+    if(k === 'website'){ var u = /^https?:/.test(s) ? s : 'https://' + s; return '<a href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(s) + '</a>'; }
+    if(k === 'business_class') return esc(s.replace(/^[0-9]+\s*-\s*/, ''));
+    return esc(s);
+  }
+
+  window.ldClose = function(){
+    var bg = g('ldModalBg'); if(bg) bg.classList.remove('open');
+    // Only release the page scroll if the client modal isn't also open.
+    var m = g('modalBg'); if(!(m && m.classList.contains('open'))) document.body.style.overflow = '';
+    cur = null;
+  };
+
+  window.ldAttemptsHtml = function(key){
+    var acts = (typeof LEAD_ACT!=='undefined' && LEAD_ACT[key]) || [];
+    var k = esc(key);
+    var btns = '<div class="log-btns" style="margin-bottom:10px">' +
+      '<button class="log-btn" onclick="logAttempt(\'' + k + '\',\'no_answer\')">☎ No answer</button>' +
+      '<button class="log-btn" onclick="logAttempt(\'' + k + '\',\'voicemail\')">🎙 Left voicemail</button>' +
+      '<button class="log-btn ok" onclick="logAttempt(\'' + k + '\',\'connected\')">✓ Connected</button>' +
+      '<button class="log-btn" style="color:#fca5a5;border-color:#ef444455" onclick="logAttempt(\'' + k + '\',\'bad_number\')">✕ Bad number</button></div>';
+    var list = acts.length
+      ? '<div class="ldm-acts">' + acts.slice(0,12).map(function(a){
+          var m = (typeof LD_KINDS!=='undefined' && LD_KINDS[a.kind]) || [a.kind,'•'];
+          return '<div><span class="ic">' + m[1] + '</span> ' + esc(m[0]) + ' <span class="t">' + esc(agoTxt(a.ts)) + '</span></div>';
+        }).join('') + '</div>'
+      : '<div style="font-size:12px;color:var(--text-muted)">No attempts logged yet — use the buttons above after each call.</div>';
+    return '<div id="ldmActs">' + btns + list + '</div>';
+  };
+
+  window.ldRefreshCard = function(key){
+    if(cur !== key) return;
+    var box = g('ldmActs'); if(box) box.outerHTML = ldAttemptsHtml(key);
+    var p = g('ldmStatusPill'); if(p) p.textContent = (typeof LEAD_STATUS!=='undefined' && LEAD_STATUS[key]) || 'new';
+  };
+
+  window.ldSetStatus = function(key, v){
+    try{ setLeadStatus(key, v); }catch(e){}
+    // setLeadStatus repaints the table; keep the modal's pill in step.
+    var p = g('ldmStatusPill'); if(p) p.textContent = v;
+  };
+
+  window.ldIntake = function(key){ ldClose(); try{ ixStartFromLeadKey(key); }catch(e){ if(typeof ixStart==='function') ixStart(); } };
+  window.ldQuote  = function(key){ ldClose(); try{ qqFromLeadKey(key); }catch(e){} };
+
+  window.ldOpen = function(key){
+    var l = ((typeof LEADS !== 'undefined' && LEADS) || []).find(function(x){ return leadKey(x.data) === key; });
+    if(!l) return;
+    var d = l.data || {};
+
+    // Already in the book (matched by name or phone)? Go straight to that client's page.
+    var mm = null; try{ mm = leadMatch(d); }catch(e){}
+    if(mm && mm.converted && mm.client && typeof openModal === 'function'){
+      var id = (mm.client._id != null) ? mm.client._id : CLIENTS.indexOf(mm.client);
+      if(id >= 0){ openModal(id); return; }
+    }
+
+    cur = key;
+    var name = d.legal_entity || 'Unnamed lead';
+    var ph = d.phone_number || ''; var tel = ph.replace(/[^0-9]/g,'');
+    var status = ((typeof LEAD_STATUS !== 'undefined' && LEAD_STATUS && LEAD_STATUS[key]) || 'new');
+    var refunded = !!(typeof REFUND_PHONES !== 'undefined' && REFUND_PHONES && REFUND_PHONES.has && REFUND_PHONES.has(ph));
+    var cls = String(d.business_class || '').replace(/^[0-9]+\s*-\s*/, '');
+
+    g('ldmAvatar').textContent = initials(name);
+    g('ldmAvatar').style.background = 'linear-gradient(135deg,' + avColor(name) + ')';
+    g('ldmName').innerHTML = esc(name) +
+      ' <span class="pill" id="ldmStatusPill" style="background:#7dd3fc22;color:#7dd3fc;border-color:#7dd3fc55;vertical-align:3px">' + esc(status) + '</span>' +
+      ' <span class="pill" style="background:#22c55e22;color:#4ade80;border-color:#22c55e55;vertical-align:3px">BoldPenguin lead</span>' +
+      (refunded ? ' <span class="pill p-expired" style="vertical-align:3px">refunded</span>' : '');
+    g('ldmOps').textContent = [cls, d.coverage_type].filter(Boolean).join(' · ') || 'No class / coverage on the lead';
+    g('ldmContact').innerHTML = [
+      d.contact_name ? '<span>👤 ' + esc(d.contact_name) + '</span>' : null,
+      ph ? '<span class="phone">✆ ' + esc(ph) + '</span>' : null,
+      d.contact_email ? '<span>✉ ' + esc(d.contact_email) + '</span>' : null,
+      (d.city || d.state) ? '<span>📍 ' + esc([d.city, d.state].filter(Boolean).join(', ')) + '</span>' : null
+    ].filter(Boolean).join('') || '<span style="color:var(--text-muted)">Phone only — no other contact info on the lead</span>';
+
+    var k = esc(key);
+    g('ldmActions').innerHTML =
+      (tel ? '<a class="act-btn primary" href="tel:+1' + tel + '">✆ Call</a>' : '') +
+      (d.contact_email ? '<a class="act-btn" href="mailto:' + esc(d.contact_email) + '">✉ Email</a>' : '') +
+      '<button class="act-btn" style="color:#4ade80;border-color:#22c55e66" onclick="ldIntake(\'' + k + '\')">▶ Start Intake</button>' +
+      '<button class="act-btn" style="color:#c4b5fd" onclick="ldQuote(\'' + k + '\')">⚡ Quick Quote</button>' +
+      '<button class="close-x" onclick="ldClose()">✕</button>';
+
+    // Field grid: known fields first in a sensible order, then anything else BP sent.
+    var keys = Object.keys(d).filter(function(x){ return !HIDE[x]; });
+    var ordered = ORDER.filter(function(x){ return keys.indexOf(x) >= 0; })
+      .concat(keys.filter(function(x){ return ORDER.indexOf(x) < 0 && x[0] !== '_'; }).sort())
+      .concat(keys.filter(function(x){ return ORDER.indexOf(x) < 0 && x[0] === '_'; }).sort());
+    var cells = ordered.map(function(x){
+      var v = fmtVal(x, d[x]); if(v == null) return '';
+      return '<div><div class="k">' + esc(human(x)) + '</div><div class="v">' + v + '</div></div>';
+    }).join('');
+
+    g('ldmBody').innerHTML =
+      '<div class="ldm-status">Lead status ' +
+        '<select class="filter-select" style="padding:5px 9px;font-size:12px" onchange="ldSetStatus(\'' + k + '\',this.value)">' +
+          ['new','called','quoted','won','dead'].map(function(s){ return '<option' + (s === status ? ' selected' : '') + '>' + s + '</option>'; }).join('') +
+        '</select>' +
+        '<span style="color:var(--text-muted);font-size:11.5px">saved as you change it</span>' +
+      '</div>' +
+      '<div class="ldm-sec">Contact attempts</div>' +
+      ldAttemptsHtml(key) +
+      '<div class="ldm-sec">What BoldPenguin sent</div>' +
+      '<div class="ldm-grid">' + (cells || '<div style="color:var(--text-muted)">Nothing beyond the name and phone.</div>') + '</div>' +
+      '<div class="ldm-next"><b>Not in your book yet.</b> This is the raw purchased lead — there is no client record behind it until you run intake. ' +
+        '<b>▶ Start Intake</b> opens the Smart Intake wizard pre-filled with everything above and, when you save, creates the prospect and drops it into the Pipeline. ' +
+        'After that, clicking this row opens the client page instead.</div>';
+
+    g('ldModalBg').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    try{ g('ldModalBg').scrollTop = 0; }catch(e){}
+  };
+
+  // One delegated listener for the whole table, so repaints don't lose the handler.
+  document.addEventListener('click', function(ev){
+    var t = ev.target; if(!t || !t.closest) return;
+    var tr = t.closest('#leadsTable tbody tr.ld-row'); if(!tr) return;
+    if(t.closest('a,button,select,option,input,label')) return; // controls keep their own behaviour
+    var key = tr.getAttribute('data-key'); if(key) ldOpen(key);
+  });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') ldClose(); });
+
+  // If the status is changed from the table while the modal is open, mirror it.
+  if(typeof setLeadStatus === 'function'){
+    var _orig = setLeadStatus;
+    window.setLeadStatus = setLeadStatus = function(key, v){
+      var r = _orig.apply(this, arguments);
+      if(cur === key){ var p = g('ldmStatusPill'); if(p) p.textContent = v; }
+      return r;
+    };
+  }
+})();
+</script>
+
+</body>
+</html>
